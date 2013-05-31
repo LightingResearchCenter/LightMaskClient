@@ -41,6 +41,8 @@
  */
 package com.ti.msp430.usb.hiddemo.management;
 
+import java.io.File;
+
 public class HidCommunicationManager {
 
 	/* TI Specific VID/PID */
@@ -71,7 +73,8 @@ public class HidCommunicationManager {
 
 	public HidCommunicationManager() {
 
-		System.loadLibrary("HidCommunicationManager");
+		String path = new File(".").getAbsolutePath();
+		System.load(path + "\\HidCommunicationManager.dll");
 		//System.load
 	}
 

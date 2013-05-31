@@ -35,7 +35,7 @@ import processing.core.PApplet;
 		public void display(){
 		   //textFont(f28, 28);
 		   app.strokeWeight(5);
-		   app.rectMode(CENTER);
+		   app.rectMode(CORNER);
 		   if (over()) {
 			   app.stroke(255, 255, 255);
 		   }
@@ -46,12 +46,12 @@ import processing.core.PApplet;
 		   app.rect(recx, recy, recsizex, recsizey, reccorners, reccorners, reccorners, reccorners);
 		   app.fill(255);
 		   app.textAlign(CENTER);
-		   app.text(name, recx, recy-8);
+		   app.text(name, recx + recsizex/2 , recy + recsizey/2 -8);
 		} 
 	 
 	  //true when mouse is over the button
 	  public boolean over() {
-	    if((app.mouseX > (recx - recsizex/2)) && (app.mouseX < (recx + recsizex/2)) && (app.mouseY > (recy - recsizey/2)) && (app.mouseY < (recy + recsizey/2))) {
+	    if((app.mouseX > (recx)) && (app.mouseX < (recx + recsizex)) && (app.mouseY > (recy)) && (app.mouseY < (recy + recsizey))) {
 	      return true;
 	    }
 	    else {

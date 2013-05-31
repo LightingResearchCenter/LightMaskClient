@@ -1,3 +1,0 @@
-
-com.rpi.lrc.lightmaskclient.LightMaskClient
-LightMaskClient.jar

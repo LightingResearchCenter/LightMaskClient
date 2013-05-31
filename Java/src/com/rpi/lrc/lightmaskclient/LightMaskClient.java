@@ -4,10 +4,15 @@ package com.rpi.lrc.lightmaskclient;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.TextArea;
 import java.io.File;
 import java.util.Date;
+
+import controlP5.ControlEvent;
+import controlP5.ControlP5;
+import controlP5.DropdownList;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -25,9 +30,14 @@ public class LightMaskClient extends PApplet {
 
 	//Colored Buttons
 	Button downloadButton;
-	Button checkButton;
-	Button loadButton;
 	Button programButton;
+
+	//Buttons coordinates
+	final int leftButtonX = 25;
+	final int rightButtonX = 215;
+	final int buttonY = 70;
+	
+	DropdownMenu ddm;
 
 	//StatusBars
 	StatusBar DaysimStatus;
@@ -49,20 +59,28 @@ public class LightMaskClient extends PApplet {
 
 	//Configure window and text
 	public void setup() {
-		size(400, 600);
+		size(400, 500);
 		background(0);
+		
 		f28 = loadFont("Calibri-28.vlw"); 
 		f20 = loadFont("Calibri-20.vlw");
-		frame.setTitle("Daysimeter and Lightmask Client");
 		strokeWeight(5);
+		
 		DaysimStatus = new StatusBar(this, "Daysimeter", 0, 187);
 		LightMaskStatus = new StatusBar(this, "LightMask", 215, 184);
 		download = new DaysimDownload(this);
 		maskManager = new LightMaskManager();
 		fileSelector = new FileDialog();
 		odesolver = new MatlabODESolver();
+		ddm = new DropdownMenu(this);
+		String [] cf = showPulseSettings();
+		
 		initTextArea();
 		initButtons();
+		
+		rectMode(CORNER);
+		fill(200);
+		rect(-5, -5, 407, 54, 0, 0, 5, 5);
 	} 
 	
 	//Main Program Loop
@@ -70,8 +88,6 @@ public class LightMaskClient extends PApplet {
 		frameRate(20);
 		textFont(f28, 28);
 		downloadButton.display();
-		checkButton.display();
-		loadButton.display();
 		programButton.display();
 		statusbar_display();
 		dayConnected = find_daysimeter();
@@ -80,6 +96,10 @@ public class LightMaskClient extends PApplet {
 		}
 		
 	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////Event Handling
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//Action if clicked on a button
 	public void mousePressed() {
@@ -93,50 +113,7 @@ public class LightMaskClient extends PApplet {
 					taMain.setText("Please Connect Daysimeter");
 				}
 			}
-			//Display the Mask Schedule
-			else if (checkButton.over() == true){
-				if( maskConnected){
-					taMain.setText("                  LightMask Schedule\n");
-					taMain.append("             ON                               OFF\n");
-					maskManager.sendCommand("getOn:!");
-					//allow MSP430 time to respond
-					try {
-					    Thread.sleep(500);
-					} catch(InterruptedException ex) {
-					    Thread.currentThread().interrupt();
-					}
-					maskManager.sendCommand("getOff:!");
-					//allow MSP430 time to respond
-					try {
-					    Thread.sleep(500);
-					} catch(InterruptedException ex) {
-					    Thread.currentThread().interrupt();
-					}
-					for (int i = 0; i < 7; i++){
-						if (!maskManager.getMaskSchedule(i).isEmpty()){
-							taMain.append(i + maskManager.getMaskSchedule(i));
-						}
-					}
-				}
-				else {
-					taMain.setText("LightMask not available. Please make sure that it is plugged in and this is the only client running.");
-				}
-			}
-			//Save location of processed data file in /data/daysimeter_processed_path.txt
-			else if (loadButton.over() == true){
-				taMain.setText("Select File to Load");
-				String[] loadPath = new String[1];
-				loadPath[0] = fileSelector.selectInput("Select Processed File");
-				if (loadPath[0] == null){
-					daysPathSet = false;
-				}
-				else {
-					saveStrings("/src/data/daysimeter_processed_path.txt", loadPath);
-					taMain.append("\nFile  at location:\n" + loadPath[0] + "\nhas been loaded");
-					daysPathSet = true;
-				}
-			    
-			}
+			
 			//Set the Mask times based on the Daysimeter file and Matlab calculations
 			else if (programButton.over() == true){
 				if (daysPathSet == false){
@@ -166,36 +143,70 @@ public class LightMaskClient extends PApplet {
 		}
 	}
 	
+	//Checks for presses in the drop down menu
+	public void controlEvent(ControlEvent event) {
+		if (event.isGroup()) {
+			if (event.getValue() == 1) {
+				loadFile();
+			}
+
+			else if (event.getValue() == 2) {
+				checkSchedule();
+			}
+			
+			else if (event.getValue() == 3) {
+				maskManager.sendCommand("getClock:!");
+			}
+			
+			else if (event.getValue() == 4) {
+				String date = year() + "," + month() + "," + day() + "," + hour() + "," + minute();
+				maskManager.sendCommand("setClock:" + date + " !");
+				maskManager.sendCommand("getClock:!");
+			}
+			
+			else if (event.getValue() == 5) {
+				checkPulseSettings();
+			}
+			
+			else if (event.getValue() == 6) {
+				String [] settings = showPulseSettings();
+				maskManager.sendCommand("pulseDur:" + settings[1] + "!");
+			}
+			
+			ddm.researchTools.setCaptionLabel("Research Menu");
+			rectMode(CORNER);
+			fill(200);
+			rect(-5, -5, 407, 54, 0, 0, 5, 5);
+		}
+	}
 	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////Initialization
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	//initialize the GUI buttons
 	private void initButtons(){		
 		strokeWeight(5);
 		rectMode(CENTER);
-		downloadButton = new Button(this, 105, 100, "DOWNLOAD\nDATA");
+		downloadButton = new Button(this, leftButtonX, buttonY, "DOWNLOAD\nDATA");
 		downloadButton.setRecColor(255, 0, 0);
 		downloadButton.setStrokeColor(150, 0, 0);
-		checkButton = new Button(this, 295, 100, "CHECK MASK\nSCHEDULE");
-		checkButton.setRecColor(0,0,255);
-		checkButton.setStrokeColor(0,0,155);
-		loadButton = new Button(this, 105, 225, "LOAD DATA\nFROM FILE");
-		loadButton.setRecColor(235, 235, 0);
-		loadButton.setStrokeColor(135,135,0);
-		programButton = new Button (this, 295, 225, "PROGRAM\nMASK");
+		programButton = new Button (this, rightButtonX, buttonY, "PROGRAM\nMASK");
 		programButton.setRecColor(0, 125, 0);
 		programButton.setStrokeColor(0, 75, 0);
 	}
 	
-	//Set up main text for displaying inforation
+	//Set up main text for displaying information
 	private void initTextArea(){
 		taMain = new TextArea("Welcome to the Daysimeter and Lightmask Programing Station.", 5, 5, 3);
 		taMain.setFont(new Font("Calibri", Font.PLAIN, 18));
 		taMain.setBackground(Color.darkGray);
 		taMain.setForeground(Color.white);
+		
 		mainPanel = new Panel();  
 		mainPanel.setLayout(new BorderLayout());
 		add(mainPanel);
-		mainPanel.setBounds(25, 300, 350, 280);
+		mainPanel.setBounds(25, buttonY + 130, 350, 280);
 		mainPanel.add(taMain, BorderLayout.CENTER);
 		setLayout(new BorderLayout());
 		mainPanel.setVisible(true);
@@ -208,7 +219,25 @@ public class LightMaskClient extends PApplet {
 		DaysimStatus.display();
 		LightMaskStatus.display();
 	}
+	
+	String [] showPulseSettings() {
+		  Frame f = new Frame("Light Pulse Settings");
+		  PulseSettings p = new PulseSettings(this, f, 175, 200);
+		  f.add(p);
+		  p.init();
+		  f.setTitle("Light Pulse Settings");
+		  f.setSize(p.w, p.h);
+		  f.setLocation(100, 100);
+		  f.setResizable(false);
+		  f.setVisible(true);
+		  
+		  return new String [] {p.pulseDur, p.pulseInt, p.pulseRep};
+		}
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////File Handling
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	//TODO
 		//Find a better way of doing this 
 	
@@ -247,7 +276,70 @@ public class LightMaskClient extends PApplet {
 	    return "nothing";
 	}
 	
-	//getters and setters
+	public void loadFile () {
+		taMain.setText("Select File to Load");
+		String[] loadPath = new String[1];
+		loadPath[0] = fileSelector.selectInput("Select Processed File");
+		if (loadPath[0] == null){
+			daysPathSet = false;
+		}
+		else {
+			saveStrings("/src/data/daysimeter_processed_path.txt", loadPath);
+			taMain.append("\nFile  at location:\n" + loadPath[0] + "\nhas been loaded");
+			daysPathSet = true;
+		}
+	}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////Getters and setters
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public void checkSchedule () {
+		if( maskConnected){
+			taMain.setText("                  LightMask Schedule\n");
+			taMain.append("             ON                               OFF\n");
+			maskManager.sendCommand("getOn:!");
+			//allow MSP430 time to respond
+			try {
+			    Thread.sleep(500);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+			maskManager.sendCommand("getOff:!");
+			//allow MSP430 time to respond
+			try {
+			    Thread.sleep(500);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+			for (int i = 0; i < 7; i++){
+				if (!maskManager.getMaskSchedule(i).isEmpty()){
+					taMain.append(i + maskManager.getMaskSchedule(i));
+				}
+			}
+		}
+		else {
+			taMain.setText("LightMask not available. Please make sure that it is plugged in and this is the only client running.");
+		}
+	}
+	
+	public void checkPulseSettings () {
+		maskManager.sendCommand("getDur:!");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		maskManager.sendCommand("getInt:!");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		maskManager.sendCommand("getRep:!");
+	}
 	
 	public static LightMaskManager getMaskMan(){
 		return maskManager;
@@ -264,5 +356,5 @@ public class LightMaskClient extends PApplet {
 	
 	public static void appendMainText(String atext){
 		taMain.append(atext);
-	}
+	}	
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>LightMaskClient</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>proclipsing.core.ProcessingProjectNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>ddk_build</name>
+			<type>2</type>
+			<location>C:/Users/lab/Desktop/HID_DLL/hidapi/windows/ddk_build</location>
+		</link>
+	</linkedResources>
+</projectDescription>

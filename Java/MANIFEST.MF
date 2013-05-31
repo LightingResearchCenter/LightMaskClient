@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: Fat Jar/One-JAR Eclipse Plug-In
+Main-Class: com.simontuffs.onejar.Boot
+One-Jar-Expand: data/
+One-Jar-Expand-Dir: ${user.dir}/src/data
+

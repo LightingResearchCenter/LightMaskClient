@@ -35,7 +35,7 @@ class StatusBar extends PApplet{
 	    app.rect(location, 0, length, 31, 0, 0, 5, 5);
 	    app.fill(0);
 	    app.textFont(f20, 20);
-	    app.text(statusText, textLocation, 22);
+	    app.text(statusText, textLocation, 38);
 	    app.ellipseMode(CENTER);
 	    if (connected) {
 	    	app.fill(0, 255, 0);
@@ -45,7 +45,7 @@ class StatusBar extends PApplet{
 	    	app.fill(255, 0, 0);
 	    	app.stroke(255, 0, 0);
 	    }
-	    app.ellipse(location+length-25, 15, 20, 20);
+	    app.ellipse(location+length-25, 30, 20, 20);
 	}
 	
 	void setText(String tex, int location){
