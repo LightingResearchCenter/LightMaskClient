@@ -25,7 +25,7 @@ public class DropdownMenu extends PApplet{
 	public void customize(DropdownList ddl) {
 		ddl.setBarHeight(15);
 		ddl.setItemHeight(15);
-		ddl.setHeight(8*15);
+		ddl.setHeight(9*15);
 		
 		ddl.setCaptionLabel("Research Menu");
 		ddl.addItem("Load File", 1);
@@ -34,6 +34,7 @@ public class DropdownMenu extends PApplet{
 		ddl.addItem("Set Clock", 4);
 		ddl.addItem("Check Pulse Settings", 5);
 		ddl.addItem("Set Pulse Settings", 6);
+		ddl.addItem("Initial Run", 7);
 		
 		ddl.setColorBackground(color(200));
 		ddl.setColorActive(color(200));

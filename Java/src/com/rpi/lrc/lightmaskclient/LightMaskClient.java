@@ -177,10 +177,11 @@ public class LightMaskClient extends PApplet {
 				showPulseSettingsDialog();
 			}
 			
+			else if (event.getValue() == 7) {
+				showWizardDialog();
+			}
+			
 			ddm.researchTools.setCaptionLabel("Research Menu");
-			/*rectMode(CORNER);
-			fill(200);
-			rect(-5, -5, 407, 54, 0, 0, 5, 5);*/
 		}
 	}
 	
@@ -232,7 +233,7 @@ public class LightMaskClient extends PApplet {
 		LightMaskStatus.display();
 	}
 	
-	String [] showPulseSettingsDialog() {
+	void showPulseSettingsDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
 		  PulseSettings p = new PulseSettings(this, f, 175, 200);
 		  f.add(p);
@@ -242,8 +243,18 @@ public class LightMaskClient extends PApplet {
 		  f.setLocation(100, 100);
 		  f.setResizable(false);
 		  f.setVisible(true);
-		  
-		  return new String [] {p.pulseDur, p.pulseInt, p.pulseRep};
+		}
+	
+	void showWizardDialog() {
+		  Frame f = new Frame("Light Pulse Settings");
+		  Wizard w = new Wizard(this, f, 175, 390);
+		  f.add(w);
+		  w.init();
+		  f.setTitle("Initial Run Wizard");
+		  f.setSize(w.w, w.h);
+		  f.setLocation(100, 100);
+		  f.setResizable(false);
+		  f.setVisible(true);
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -409,6 +420,10 @@ public class LightMaskClient extends PApplet {
 	    e.printStackTrace();
 	    System.exit(2);
 	  }
+	}
+	
+	static boolean isInRange (float n, float min, float max) {
+		return ((n > min) && (n < max));
 	}
 }
 
