@@ -1,7 +1,6 @@
 package com.rpi.lrc.lightmaskclient;
 
 import java.awt.Frame;
-import java.awt.BorderLayout;
 
 import processing.core.PApplet;
 import controlP5.*;
@@ -39,9 +38,6 @@ public class PulseSettings extends PApplet {
 	      background(100);
 	  }
 	  
-	  private PulseSettings() {
-	  }
-
 	  public PulseSettings(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
 	    parent = theParent;
 	    w = theWidth;

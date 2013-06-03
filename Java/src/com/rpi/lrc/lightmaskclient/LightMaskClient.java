@@ -15,8 +15,6 @@ import java.net.ServerSocket;
 import java.util.Date;
 
 import controlP5.ControlEvent;
-import controlP5.ControlP5;
-import controlP5.DropdownList;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -123,11 +121,11 @@ public class LightMaskClient extends PApplet {
 				else if (maskConnected){
 					taMain.setText("Calculating on/off times, please wait...");
 					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");
-					//If this is the initial calculation us CBTmin file
+					//If this is the initial calculation use CBTmin file
 					if (firstRun[0].toLowerCase().contains("true")){
 						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");
 						appendMainText("\nInitial Run");
-						odesolver.calculateInitial(values[1], values[2], values[3], values[4], values[5], values[6]);
+						odesolver.calculateInitial(values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
 						firstRun[0] = "false";
 						saveStrings("/src/data/initial_run_flag.txt", firstRun);
 					}
@@ -176,7 +174,7 @@ public class LightMaskClient extends PApplet {
 			
 			//Create a dialog to change the pulse settings and then show the settings
 			else if (event.getValue() == 6) {
-				String [] settings = showPulseSettingsDialog();
+				showPulseSettingsDialog();
 			}
 			
 			ddm.researchTools.setCaptionLabel("Research Menu");
