@@ -51,7 +51,7 @@ public class MatlabODESolver extends PApplet{
 	}
 	
 	//Uses CBTmin Matlab console file for the initial calculation
-	public void calculateInitial(String CBTminInitial,String CBTminTarget, String starttime, String endtime, String tau, String lightlevel){
+	public void calculateInitial(String CBTminInitial,String CBTminTarget, String starttime, String endtime, String tau, String lightlevel, String maxDur, String maskColor){
 		LightMaskClient.calcStatus(false);
 		processed_file = loadStrings(workingDirectory + "data\\daysimeter_processed_path.txt");
 		logArray = loadStrings(workingDirectory + "data\\Lightmask_initial_values.txt");
@@ -62,7 +62,7 @@ public class MatlabODESolver extends PApplet{
 		}
 		try {   //Run matlab program from the command line in a new process
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
-					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel).start();
+					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

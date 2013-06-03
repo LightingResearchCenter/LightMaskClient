@@ -1,4 +1,4 @@
-function [onTimes , offTimes, finalX, finalXC, endTime] = LEAP_CBTmin_rk4_NoPlot20Mar2013(DaysimeterDataFile,CBTminTarget,CBTminInitial,AvailStartTime,AvailEndTime,tau,maskLightLevel)
+function [onTimes , offTimes, finalX, finalXC, endTime] = LEAP_CBTmin_rk4_NoPlot20Mar2013(DaysimeterDataFile,CBTminTarget,CBTminInitial,AvailStartTime,AvailEndTime,tau,maskLightLevel,maxDur,maskColor)
 % Input arguements
 % DaysimeterDataFile: file name of calibrated Daysimeter data [dateStr,timeStr,Lux,CLA,CS,Activity]
 % CBTminTarget: target CBTmin time in hours (0 <= CBTminTarget < 24)
@@ -33,6 +33,8 @@ AvailStartTime = str2num(AvailStartTime);
 AvailEndTime = str2num(AvailEndTime);
 tau = str2num(tau);
 maskLightLevel = str2num(maskLightLevel);
+maxDur = str2num(maxDur);
+maskColor = str2num(maskColor);
 
 % Constants/Initial Conditions
 offLightLevel = 0.0; %Min Light Level (CS units)
