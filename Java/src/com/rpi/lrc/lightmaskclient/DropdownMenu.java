@@ -18,27 +18,21 @@ public class DropdownMenu extends PApplet{
 		cp5 = new ControlP5(app, f13);
 		researchTools = cp5.addDropdownList("Research Menu", 0, 16, 400, 15);
 		customize(researchTools);
-		//researchTools.hide();
+		researchTools.hide();
 	}
 
 	public void customize(DropdownList ddl) {
-
-
-		//ControlFont cf1 = new ControlFont(c13);
 		ddl.setBarHeight(15);
 		ddl.setItemHeight(15);
-		ddl.setHeight(6*15);
+		ddl.setHeight(8*15);
 		ddl.setCaptionLabel("Research Menu");
-		//ddl.captionLabel().setControlFont(cf1);
-		//ddl.captionLabel().
-		//ddl.style().marginHeight = -2;
 		ddl.addItem("Load File", 1);
 		ddl.addItem("Check Mask Schedule", 2);
 		ddl.addItem("Check Clock", 3);
 		ddl.addItem("Set Clock", 4);
-		ddl.addItem("Check Pulse Settings", 5);		
+		ddl.addItem("Check Pulse Settings", 5);
+		ddl.addItem("Set Pulse Settings", 6);
 		ddl.setColorBackground(color(200));
-		//ddl.valueLabel().setControlFont(cf1);
 		ddl.setColorActive(color(200));
 
 	}

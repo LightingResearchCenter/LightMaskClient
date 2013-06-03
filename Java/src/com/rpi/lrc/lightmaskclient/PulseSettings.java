@@ -42,7 +42,7 @@ public class PulseSettings extends PApplet {
 	  private PulseSettings() {
 	  }
 
-	  public PulseSettings(Object theParent, Frame f, int theWidth, int theHeight) {
+	  public PulseSettings(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
 	    parent = theParent;
 	    w = theWidth;
 	    h = theHeight;
@@ -58,7 +58,7 @@ public class PulseSettings extends PApplet {
 	  
 	  ControlP5 cp5;
 
-	  Object parent;
+	  LightMaskClient parent;
 	  
 	  public void controlEvent(ControlEvent theEvent) {
 		  if(theEvent.getName() == "Submit") {
@@ -71,6 +71,7 @@ public class PulseSettings extends PApplet {
 			  }
 			  
 			  println(pulseDur + "\n" + pulseInt + "\n" + pulseRep);
+			  parent.setPulseSettings(pulseDur, pulseInt, pulseRep);
 			  fr.dispose();		  
 		  }
 		  
