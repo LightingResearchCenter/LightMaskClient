@@ -8,6 +8,10 @@ import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.TextArea;
 import java.io.File;
+import java.io.IOException;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.util.Date;
 
 import controlP5.ControlEvent;
@@ -59,33 +63,31 @@ public class LightMaskClient extends PApplet {
 
 	//Configure window and text
 	public void setup() {
+		checkIfRunning();		
+		
 		size(400, 500);
-		background(0);
+		//background(0);
 		
 		f28 = loadFont("Calibri-28.vlw"); 
 		f20 = loadFont("Calibri-20.vlw");
 		strokeWeight(5);
 		
-		DaysimStatus = new StatusBar(this, "Daysimeter", 0, 187);
+		DaysimStatus = new StatusBar(this, "Daysimeter", 0, 220);
 		LightMaskStatus = new StatusBar(this, "LightMask", 215, 184);
 		download = new DaysimDownload(this);
 		maskManager = new LightMaskManager();
 		fileSelector = new FileDialog();
 		odesolver = new MatlabODESolver();
 		ddm = new DropdownMenu(this);
-		String [] cf = showPulseSettings();
 		
 		initTextArea();
 		initButtons();
-		
-		rectMode(CORNER);
-		fill(200);
-		rect(-5, -5, 407, 54, 0, 0, 5, 5);
 	} 
 	
 	//Main Program Loop
 	public void draw() {
 		frameRate(20);
+		background(0);
 		textFont(f28, 28);
 		downloadButton.display();
 		programButton.display();
@@ -94,7 +96,6 @@ public class LightMaskClient extends PApplet {
 		if (!maskConnected){
 			maskConnected = maskManager.find_mask();
 		}
-		
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,7 +106,7 @@ public class LightMaskClient extends PApplet {
 	public void mousePressed() {
 		if(calcComplete){
 			//Download the data from the Daysimeter and store the location of the saved file in /data/daysimeter_processed_path.txt
-			if (downloadButton.over() == true){
+			if (downloadButton.over() == true) {
 				if (dayConnected){
 					download.downloadData();
 			    }
@@ -146,40 +147,53 @@ public class LightMaskClient extends PApplet {
 	//Checks for presses in the drop down menu
 	public void controlEvent(ControlEvent event) {
 		if (event.isGroup()) {
+			//Load a daysimeter file for testing
 			if (event.getValue() == 1) {
 				loadFile();
 			}
 
+			//Check mask schedule
 			else if (event.getValue() == 2) {
 				checkSchedule();
 			}
 			
+			//Check the current time of the mask
 			else if (event.getValue() == 3) {
 				maskManager.sendCommand("getClock:!");
 			}
 			
+			//Set the mask time to the current time of the computer's clock and show it
 			else if (event.getValue() == 4) {
 				String date = year() + "," + month() + "," + day() + "," + hour() + "," + minute();
 				maskManager.sendCommand("setClock:" + date + " !");
 				maskManager.sendCommand("getClock:!");
 			}
 			
+			//Check the current pulse duration, intensity, and repetition period
 			else if (event.getValue() == 5) {
 				checkPulseSettings();
 			}
 			
+			//Create a dialog to change the pulse settings and then show the settings
 			else if (event.getValue() == 6) {
-				String [] settings = showPulseSettings();
-				maskManager.sendCommand("pulseDur:" + settings[1] + "!");
+				String [] settings = showPulseSettingsDialog();
 			}
 			
 			ddm.researchTools.setCaptionLabel("Research Menu");
-			rectMode(CORNER);
+			/*rectMode(CORNER);
 			fill(200);
-			rect(-5, -5, 407, 54, 0, 0, 5, 5);
+			rect(-5, -5, 407, 54, 0, 0, 5, 5);*/
 		}
 	}
 	
+	public void keyPressed() {
+		if (key == 'R') {
+			ddm.researchTools.show();
+		}
+		else if (key == 'S') {
+			ddm.researchTools.hide();
+		}
+	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////Initialization
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -188,10 +202,10 @@ public class LightMaskClient extends PApplet {
 	private void initButtons(){		
 		strokeWeight(5);
 		rectMode(CENTER);
-		downloadButton = new Button(this, leftButtonX, buttonY, "DOWNLOAD\nDATA");
+		downloadButton = new Button(this, leftButtonX, buttonY, "DOWNLOAD\nDATA", ddm.cp5);
 		downloadButton.setRecColor(255, 0, 0);
 		downloadButton.setStrokeColor(150, 0, 0);
-		programButton = new Button (this, rightButtonX, buttonY, "PROGRAM\nMASK");
+		programButton = new Button (this, rightButtonX, buttonY, "PROGRAM\nMASK", ddm.cp5);
 		programButton.setRecColor(0, 125, 0);
 		programButton.setStrokeColor(0, 75, 0);
 	}
@@ -220,7 +234,7 @@ public class LightMaskClient extends PApplet {
 		LightMaskStatus.display();
 	}
 	
-	String [] showPulseSettings() {
+	String [] showPulseSettingsDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
 		  PulseSettings p = new PulseSettings(this, f, 175, 200);
 		  f.add(p);
@@ -324,6 +338,7 @@ public class LightMaskClient extends PApplet {
 	}
 	
 	public void checkPulseSettings () {
+		taMain.setText("");
 		maskManager.sendCommand("getDur:!");
 		try {
 			Thread.sleep(100);
@@ -339,6 +354,27 @@ public class LightMaskClient extends PApplet {
 			e.printStackTrace();
 		}
 		maskManager.sendCommand("getRep:!");
+	}
+	
+	public void setPulseSettings (String pulseDur, String pulseInt, String pulseRep) {
+		taMain.setText("");
+		maskManager.sendCommand("pulseDur:" + pulseDur + "!");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		maskManager.sendCommand("pulseInt:" + pulseInt + "!");
+		try {
+			Thread.sleep(100);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		maskManager.sendCommand("pulseRep:" + pulseRep + "!");
+		
+		//checkPulseSettings();
 	}
 	
 	public static LightMaskManager getMaskMan(){
@@ -357,4 +393,24 @@ public class LightMaskClient extends PApplet {
 	public static void appendMainText(String atext){
 		taMain.append(atext);
 	}	
+	
+	private static final int PORT = 9999;
+	private static ServerSocket socket;    
+
+	private static void checkIfRunning() {
+	  try {
+	    //Bind to localhost adapter with a zero connection queue 
+	    socket = new ServerSocket(PORT,0,InetAddress.getByAddress(new byte[] {127,0,0,1}));
+	  }
+	  catch (BindException e) {
+	    System.err.println("Already running.");
+	    System.exit(1);
+	  }
+	  catch (IOException e) {
+	    System.err.println("Unexpected error.");
+	    e.printStackTrace();
+	    System.exit(2);
+	  }
+	}
 }
+
