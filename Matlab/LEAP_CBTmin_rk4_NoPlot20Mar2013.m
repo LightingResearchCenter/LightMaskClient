@@ -34,7 +34,6 @@ AvailEndTime = str2num(AvailEndTime);
 tau = str2num(tau);
 maskLightLevel = str2num(maskLightLevel);
 maxDur = str2num(maxDur);
-maskColor = str2num(maskColor);
 
 % Constants/Initial Conditions
 offLightLevel = 0.0; %Min Light Level (CS units)
