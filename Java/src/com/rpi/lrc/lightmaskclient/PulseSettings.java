@@ -9,6 +9,7 @@ public class PulseSettings extends PApplet {
 
 	  int w, h;
 	  Frame fr;
+	  Textfield txt [] = new Textfield [3];
 	  
 	  public String pulseDur, pulseInt, pulseRep;
 	  
@@ -19,23 +20,23 @@ public class PulseSettings extends PApplet {
 	    frameRate(25);
 	    cp5 = new ControlP5(this);
 	    
-	    cp5.addTextfield("Pulse Duration")
-	    	.setWidth(150)
-	    	.setPosition(10, 10);
-	    cp5.addTextfield("Pulse Intensity")
-	    	.setWidth(150)
-    		.setPosition(10, 50);
-	    cp5.addTextfield("Pulse Repetition Period")
-	    	.setWidth(150)
-    		.setPosition(10, 90);
+	    txt[0] = cp5.addTextfield("Pulse Duration");
+	    txt[1] = cp5.addTextfield("Pulse Intensity");
+	    txt[2] = cp5.addTextfield("Pulse Repetition Period");
+	    for (int i = 0; i < 3; i++) {
+	    	txt[i].setWidth(150)
+	    		.setPosition(10, 40 * i + 10);
+	    }
+	    
 	    cp5.addButton("Submit")
 	    	.setPosition(10, 140);
 	    cp5.addButton("Cancel")
-    	.setPosition(90, 140);
+    		.setPosition(90, 140);
 	  }
 
 	  public void draw() {
 	      background(100);
+	      CheckValidValues();
 	  }
 	  
 	  public PulseSettings(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
@@ -58,11 +59,11 @@ public class PulseSettings extends PApplet {
 	  
 	  public void controlEvent(ControlEvent theEvent) {
 		  if(theEvent.getName() == "Submit") {
-			  pulseDur = cp5.get(Textfield.class, "Pulse Duration").getText();
-			  pulseInt = cp5.get(Textfield.class, "Pulse Intensity").getText();
-			  pulseRep = cp5.get(Textfield.class, "Pulse Repetition Period").getText();
+			  pulseDur = txt[0].getText();
+			  pulseInt = txt[1].getText();
+			  pulseRep = txt[2].getText();
 			  
-			  if (!isInteger(pulseDur) || !isInteger(pulseInt) || !isInteger(pulseRep)) {
+			  if (!CheckValidValues()) {
 				  return;
 			  }
 			  
@@ -76,15 +77,37 @@ public class PulseSettings extends PApplet {
 		  }
 		}
 	  
+	  boolean isInRange (int n, int min, int max) {
+			return ((n > min) && (n < max));
+		}
+	  
 	  public static boolean isInteger(String s) {
 		    try { 
 		        Integer.parseInt(s); 
-		    } catch(NumberFormatException e) { 
+		    }
+		    catch(NumberFormatException e) { 
 		        return false; 
 		    }
 		    // only got here if we didn't return false
 		    return true;
 		}
-
 	  
+	  boolean CheckValidValues () {
+			boolean valid = true;
+			for (int i  = 0; i < 3; i++) {
+				valid &= isValidValue(txt[i], 0, 9999);
+			}
+			return valid;
+		}
+
+		boolean isValidValue(Textfield t, int min, int max) {
+			if(isInteger(t.getText()) && isInRange(Integer.parseInt(t.getText()), min, max)) {
+				t.setColorForeground(color(45, 185, 0));
+				return true;
+			}
+			else {
+				t.setColorForeground(color(183, 0, 0));
+				return false;
+			}
+		}
 	}
