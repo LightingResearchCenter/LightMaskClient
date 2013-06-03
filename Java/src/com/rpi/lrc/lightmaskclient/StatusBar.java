@@ -32,7 +32,7 @@ class StatusBar extends PApplet{
 	    app.strokeWeight(1);
 	    app.stroke(200);
 	    app.rectMode(CORNER);
-	    app.rect(location, 0, length, 31, 0, 0, 5, 5);
+	    app.rect(location, 0, length, 50, 0, 0, 5, 5);
 	    app.fill(0);
 	    app.textFont(f20, 20);
 	    app.text(statusText, textLocation, 38);
@@ -45,7 +45,8 @@ class StatusBar extends PApplet{
 	    	app.fill(255, 0, 0);
 	    	app.stroke(255, 0, 0);
 	    }
-	    app.ellipse(location+length-25, 30, 20, 20);
+	    int width = (int)(app.textWidth(statusText));
+	    app.ellipse(textLocation+width-15, 30, 20, 20);
 	}
 	
 	void setText(String tex, int location){
