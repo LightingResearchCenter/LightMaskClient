@@ -1,5 +1,6 @@
 package com.rpi.lrc.lightmaskclient;
 
+import controlP5.ControlP5;
 import processing.core.PApplet;
 
 	public class Button extends PApplet{
@@ -18,6 +19,7 @@ import processing.core.PApplet;
 		int sb;
 		String name;
 		int reccorners = 8;
+		ControlP5 overlap;
 		
 		public Button(){
 			recx = 50;
@@ -25,15 +27,15 @@ import processing.core.PApplet;
 			name = "NAME";
 		}
 	  
-		public Button(LightMaskClient lmc, int x, int y, String n){
+		public Button(LightMaskClient lmc, int x, int y, String n, ControlP5 cp5){
 		    app = lmc;
 			recx = x;
 		    recy = y;
 		    name = n;
+		    overlap = cp5;
 		}
 	 
 		public void display(){
-		   //textFont(f28, 28);
 		   app.strokeWeight(5);
 		   app.rectMode(CORNER);
 		   if (over()) {
@@ -51,7 +53,7 @@ import processing.core.PApplet;
 	 
 	  //true when mouse is over the button
 	  public boolean over() {
-	    if((app.mouseX > (recx)) && (app.mouseX < (recx + recsizex)) && (app.mouseY > (recy)) && (app.mouseY < (recy + recsizey))) {
+	    if(!(overlap.isMouseOver()) && (app.mouseX > (recx)) && (app.mouseX < (recx + recsizex)) && (app.mouseY > (recy)) && (app.mouseY < (recy + recsizey))) {
 	      return true;
 	    }
 	    else {
