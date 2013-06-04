@@ -14,6 +14,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
+
 import controlP5.ControlEvent;
 
 import processing.core.PApplet;
@@ -247,7 +249,7 @@ public class LightMaskClient extends PApplet {
 	
 	void showWizardDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
-		  Wizard w = new Wizard(this, f, 175, 390);
+		  InitialRun w = new InitialRun(this, f, 175, 390);
 		  f.add(w);
 		  w.init();
 		  f.setTitle("Initial Run Wizard");
@@ -413,6 +415,7 @@ public class LightMaskClient extends PApplet {
 	  }
 	  catch (BindException e) {
 	    System.err.println("Already running.");
+	    JOptionPane.showMessageDialog(taMain, "LightMask Client already running.");
 	    System.exit(1);
 	  }
 	  catch (IOException e) {

@@ -34,7 +34,8 @@ public class DropdownMenu extends PApplet{
 		ddl.addItem("Set Clock", 4);
 		ddl.addItem("Check Pulse Settings", 5);
 		ddl.addItem("Set Pulse Settings", 6);
-		ddl.addItem("Initial Run", 7);
+		ddl.addItem("Set Initial Run Values", 7);
+		
 		
 		ddl.setColorBackground(color(200));
 		ddl.setColorActive(color(200));

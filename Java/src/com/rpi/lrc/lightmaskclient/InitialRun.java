@@ -1,11 +1,12 @@
 package com.rpi.lrc.lightmaskclient;
 
 import java.awt.Frame;
+import java.io.OutputStream;
 
 import processing.core.PApplet;
 import controlP5.*;
 
-public class Wizard extends PApplet {
+public class InitialRun extends PApplet {
 
 	int w, h;								// Width and height of the window
 	Frame fr;								//Frame containing the applet
@@ -51,7 +52,7 @@ public class Wizard extends PApplet {
 		CheckValidValues();
 	}
 
-	public Wizard(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
+	public InitialRun(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
 		parent = theParent;
 		w = theWidth;
 		h = theHeight;
@@ -63,28 +64,49 @@ public class Wizard extends PApplet {
 	}
 
 	void Submit(int theValue) {		
-		CBTmin = txt[0].getText();
-		CBTminTarget = txt[1].getText();
-		availStartTime = txt[2].getText();
-		availEndTime = txt[3].getText();
-		tau = txt[4].getText();
-		lightLevel= txt[5].getText();
-		maxDur = txt[6].getText();
+		String initValues [] = new String [9];
+		
+		initValues[0] = CBTmin = txt[0].getText();
+		initValues[1] = CBTminTarget = txt[1].getText();
+		initValues[2] = availStartTime = txt[2].getText();
+		initValues[3] = availEndTime = txt[3].getText();
+		initValues[4] = tau = txt[4].getText();
+		initValues[5] = lightLevel= txt[5].getText();
+		initValues[6] = maxDur = txt[6].getText();
+		
+		initValues[8] = "===============Only use numbers above this line\n" +
+				"Formate of this file is in order:\n" +
+				"Subject ID\n" +
+				"CBTmin\n" +
+				"availStartTime\n" +
+				"availEndTime\n" +
+				"Tau\n" +
+				"maskLightLevel (CS)\n" +
+				"maxDur\n" +
+				"maskColor\n";
+		
 
+		OutputStream os = createOutput("/src/data/Lightmask_initial_values.txt");
 
 		if (!CheckValidValues()) {
 			return;
 		}
 
 		if (cp5.get(Toggle.class, "Mask Color").getState()) {
-			maskColor = "blue";
+			initValues[7] = maskColor = "blue";
 		}
 		else {
-			maskColor = "red";
+			initValues[7] = maskColor = "red";
 		}
+		String first[] = new String [1];
+		first[0] = "true";
+		saveStrings("/src/data/initial_run_flag.txt", first);
+		saveStrings("/src/data/Lightmask_initial_values.txt", initValues);
 
-		println(CBTmin + "\n" + CBTminTarget + "\n" + availStartTime + "\n" +
-				availEndTime + "\n" + tau + "\n" + lightLevel + "\n" + maxDur + "\n" + maskColor);
+		for (String s : initValues) {
+			println(s + "\n");
+		}
+		
 		fr.dispose();
 	}
 
