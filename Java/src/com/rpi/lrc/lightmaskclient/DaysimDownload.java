@@ -1,5 +1,6 @@
 package com.rpi.lrc.lightmaskclient;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -159,7 +160,20 @@ public class DaysimDownload extends PApplet{
 		String Date = Integer.toString(date.get(date.YEAR)).substring(2, 4) + month + day + "_" + hour + minute;
 
 		//Open File Chooser Dialog window with default file name.
-		String savePath = fileBrowser.selectOutput("Day" + ID + "_" + Date + ".raw");
+		String filePath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		String[] firstRun = loadStrings(filePath);
+		println(firstRun[0]);
+		String savePath;
+		if (firstRun.length <= 1) {
+			savePath = fileBrowser.selectOutput("Day" + ID + "_" + Date + ".raw");
+			String newPath[] = {firstRun[0], savePath};
+			saveStrings(filePath, newPath);
+		}
+		else {
+			savePath = firstRun[1];
+		}
+		
+		
 		if (savePath == null){
 			//User exited without choosing a file
 		}

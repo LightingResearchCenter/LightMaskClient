@@ -84,9 +84,6 @@ public class InitialRun extends PApplet {
 				"maskLightLevel (CS)\n" +
 				"maxDur\n" +
 				"maskColor\n";
-		
-
-		OutputStream os = createOutput("/src/data/Lightmask_initial_values.txt");
 
 		if (!CheckValidValues()) {
 			return;
