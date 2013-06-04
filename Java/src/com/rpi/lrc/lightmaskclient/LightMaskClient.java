@@ -183,6 +183,14 @@ public class LightMaskClient extends PApplet {
 				showWizardDialog();
 			}
 			
+			else if (event.getValue() == 8) {
+				String date = year() + "," + month() + "," + day() + "," + hour() + "," + minute();
+				maskManager.sendCommand("setClock:" + date + " !");
+				showPulseSettingsDialog();
+				showWizardDialog();
+			}
+
+			
 			ddm.researchTools.setCaptionLabel("Research Menu");
 		}
 	}
@@ -427,6 +435,10 @@ public class LightMaskClient extends PApplet {
 	
 	static boolean isInRange (float n, float min, float max) {
 		return ((n > min) && (n < max));
+	}
+	
+	public String[] loadInitRunFile () {
+		return loadStrings("/src/data/initial_run_flag.txt");
 	}
 }
 
