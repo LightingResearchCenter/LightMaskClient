@@ -16,6 +16,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Vector;
+import java.util.logging.Logger;
+
+import javax.swing.JOptionPane;
 
 
 import processing.core.PApplet;
@@ -34,7 +37,6 @@ public class MatlabODESolver extends PApplet{
 	String[] logArray;
 	String X, XC, endtime;
 	String matlabconsole;
-	FileReadWrite files;
 	LightMaskManager maskManager;
 	String workingDirectory;
 	String[] processed_file;
@@ -60,11 +62,17 @@ public class MatlabODESolver extends PApplet{
 		if (tempDir.exists()) {  //Grab file location for matlab program
 		    matlabconsole = new String(workingDirectory + "CBTmin.exe");
 		}
+		else {
+			ErrorLog.write("CMTmin file missing");
+		}
 		try {   //Run matlab program from the command line in a new process
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
 					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
-		} catch (IOException e) {
+		} 
+		catch (IOException e) {
 			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(LightMaskClient.getFrame(), "IO.");
+			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
 	    parseResponse();
@@ -163,6 +171,7 @@ public class MatlabODESolver extends PApplet{
 		                    log.close();
 		                    saveStrings(workingDirectory + "\\data\\Lightmask_last_values.txt", logArray);
 		                } catch (IOException e) {
+		                	ErrorLog.write(e.getMessage());
 		                	e.printStackTrace();
 		                }
 		                LightMaskClient.appendMainText("Calculation Complete");
@@ -172,10 +181,12 @@ public class MatlabODESolver extends PApplet{
 	                //otherwise the calculation ran into an error
 	                else{
 	                	LightMaskClient.appendMainText("Calculation error");
+	                	ErrorLog.write("Calculation Error in Parse Response");
 	                }
 	                LightMaskClient.calcStatus(true);
 	                process.destroy();
 	            } catch (IOException e) {
+	            	ErrorLog.write(e.getMessage());
 	                e.printStackTrace();
 	            }
 	        }
@@ -245,9 +256,9 @@ public class MatlabODESolver extends PApplet{
 		    return cal.get(Calendar.MONTH)+1;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
+			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
 	    return 0;
-		
 	}
 }

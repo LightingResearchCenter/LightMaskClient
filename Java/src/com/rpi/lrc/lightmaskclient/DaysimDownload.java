@@ -160,19 +160,9 @@ public class DaysimDownload extends PApplet{
 		String Date = Integer.toString(date.get(date.YEAR)).substring(2, 4) + month + day + "_" + hour + minute;
 
 		//Open File Chooser Dialog window with default file name.
-		String filePath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
-		String[] firstRun = loadStrings(filePath);
-		println(firstRun[0]);
-		String savePath;
-		if (firstRun.length <= 1) {
-			savePath = fileBrowser.selectOutput("Day" + ID + "_" + Date + ".raw");
-			String newPath[] = {firstRun[0], savePath};
-			saveStrings(filePath, newPath);
-		}
-		else {
-			savePath = firstRun[1];
-		}
-		
+		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		String[] settingsStrings = loadStrings(settingsPath);
+		String savePath = settingsStrings[1] + "/Day" + ID + "_" + Date + ".raw";		
 		
 		if (savePath == null){
 			//User exited without choosing a file
@@ -188,6 +178,7 @@ public class DaysimDownload extends PApplet{
 			String[] processedPath = new String[1];
 			processedPath[0] = savePath.substring(0, savePath.length() - 4) + "_processed.txt";
 			saveStrings(processedPath[0], processed);
+
 			//save a raw file
 			int[] sEEPROM = new int[131072];
 			for(int i = 0; i < header.length; i++) {

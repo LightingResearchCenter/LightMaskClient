@@ -24,7 +24,6 @@ import processing.core.PFont;
 //TODO
 	//Better exception handling
 
-
 public class LightMaskClient extends PApplet {
 	
 	PFont f20, f28;
@@ -82,6 +81,8 @@ public class LightMaskClient extends PApplet {
 		
 		initTextArea();
 		initButtons();
+		
+		setPaths();
 	} 
 	
 	//Main Program Loop
@@ -138,7 +139,7 @@ public class LightMaskClient extends PApplet {
 					daysPathSet = false;
 				}
 				else {
-					taMain.setText("LightMask not available. Please make sure that it is plugged in and this is the only client running.");
+					taMain.setText("LightMask not available. Please make sure that it is plugged in.");
 				}
 			}  
 		}
@@ -413,6 +414,10 @@ public class LightMaskClient extends PApplet {
 		taMain.append(atext);
 	}	
 	
+	public static TextArea getFrame() {
+		return taMain;
+	}
+	
 	private static final int PORT = 9999;
 	private static ServerSocket socket;    
 
@@ -437,8 +442,27 @@ public class LightMaskClient extends PApplet {
 		return ((n > min) && (n < max));
 	}
 	
-	public String[] loadInitRunFile () {
-		return loadStrings("/src/data/initial_run_flag.txt");
+	void setPaths () {
+		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		String[] settingsStrings = loadStrings(settingsPath);
+		FileDialog fileBrowser = new FileDialog();
+		String daySavePath, logSavePath;
+		
+		println(settingsStrings.length);
+		if (settingsStrings.length <= 1) {
+			println("foo");
+			daySavePath = fileBrowser.selectFolder("Choose Raw Folder");
+			settingsStrings = append(settingsStrings, daySavePath);
+		}
+		
+		if (settingsStrings.length <= 2) {
+			logSavePath = fileBrowser.selectFolder("Choose Log Folder");
+			settingsStrings = append(settingsStrings, logSavePath);
+			saveStrings(settingsPath, settingsStrings);
+		}
+		ErrorLog l = new ErrorLog();
+		l.setLogPath();
+		
 	}
 }
 

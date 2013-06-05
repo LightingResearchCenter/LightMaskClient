@@ -82,10 +82,12 @@ public class HidDataReceiveThread extends Thread {
 				}
 			} catch (com.ti.msp430.usb.hiddemo.management.HidCommunicationManager.HidCommunicationException e) {
                 listener.fireStringReceivedEvent("Error receiving buffer from device!");
+                ErrorLog.write("Error receiving buffer from device!");
                 listener.fireUnableToReadEvent();
                 return;
             } catch (InterruptedException e) {
                 listener.fireStringReceivedEvent("Read polling thread existed");
+                ErrorLog.write("Read polling thread existed");
                 listener.fireUnableToReadEvent();
                 return;
             } 

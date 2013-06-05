@@ -44,6 +44,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			LightMaskClient.setMainText("Alert: getInterfacesForVidPid error");
+			ErrorLog.write("Alert: getInterfacesForVidPid error");
 			return false;
 		}
 		
@@ -53,6 +54,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			LightMaskClient.setMainText("Alert: getSerialsForVidPid error");
+			ErrorLog.write("Alert: getInterfacesForVidPid error");
 			return false;
 		}
 		
@@ -63,6 +65,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 			} catch (final com.ti.msp430.usb.hiddemo.management.HidCommunicationManager.HidCommunicationException e) {
 				e.printStackTrace();
 				LightMaskClient.setMainText("Alert: connectDevice error");
+				ErrorLog.write("Alert: connectDevice error");
 				return false;
 			}
 			readThread = new HidDataReceiveThread(hMan);
@@ -105,6 +108,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 		} catch (final HidCommunicationException e) {
 			System.out.println(e);
 			LightMaskClient.setMainText("Unable to send buffer!");
+			ErrorLog.write("Unable to send buffer");
 		}
 	}
 	
@@ -121,6 +125,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
+					ErrorLog.write(e.getMessage());
 					e.printStackTrace();
 				}
 			}
@@ -130,7 +135,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					ErrorLog.write(e.getMessage());
 					e.printStackTrace();
 				}
 			}

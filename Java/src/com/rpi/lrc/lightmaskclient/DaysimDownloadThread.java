@@ -22,10 +22,10 @@ public class DaysimDownloadThread extends Thread {
 			//byte[] b = new byte[(int)data_log.length()];
 			data_log.read(LightMaskClient.download.bytefile1);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			ErrorLog.write("Data log removed from RAM");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
 		
@@ -35,10 +35,10 @@ public class DaysimDownloadThread extends Thread {
 			//byte[] b = new byte[(int)log_info.length()];
 			log_info.read(LightMaskClient.download.bytefile2);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			ErrorLog.write("Log infro removed from RAM");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
 		
