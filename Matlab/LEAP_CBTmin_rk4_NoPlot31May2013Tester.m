@@ -50,8 +50,19 @@ nsteps = 30; % number of steps used for ODE solver for each time increment
 
 [ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
 
-[ initialStartTime, absTimeOffset, sRate, csTimeRelHours ] = RelTimeSet( Time, increment );
+% Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
+initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
+initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
+if (initialStartTime >=24)
+    initialStartTime = initialStartTime - 24;
+    absTimeOffset = floor(Time(1)) +1;
+else
+    absTimeOffset = floor(Time(1));
+end
+sRate = 1/(24*(Time(2)-Time(1))); % sample rate, 1/hours
+csTimeRelHours = (Time - floor(Time(1)))*24;
 
+% Resample CS: average value of CS during increment centered on increments
 [ CSavg, timeCSavg ] = ReSampleCS( initialStartTime, increment, csTimeRelHours, sRate, CS, Time );
 
 %Plot of CS and CSavg
@@ -70,7 +81,6 @@ nsteps = 30; % number of steps used for ODE solver for each time increment
 finalX = dX;
 finalXC = dXC;
 endTime = t2/24 + absTimeOffset;
-CBTmin = XXC2CBTmin(endTime,finalX, finalXC)
 
 %Plot Of x and xc values based on daysimeter CSavg values
 %timePlot = timePlot/24 + floor(Time(1)); % absolute time
@@ -101,7 +111,7 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration );
+[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset );
 
 %finalpX = pX; % Only for plotting
 %finalpXC = pXC; % Only for plotting
