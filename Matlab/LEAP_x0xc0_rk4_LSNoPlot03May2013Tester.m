@@ -1,4 +1,4 @@
-function [onTimes,offTimes,finalX,finalXC,endTime] = LEAP_x0xc0_rk4_LSNoPlot03May2013Tester(DaysimeterDataFile,CBTminTarget,X0,XC0,time0,AvailStartTime,AvailEndTime,tau,maskLightLevel,onTime0,onTime1,onTime2,offTime0,offTime1,offTime2)
+function [onTimes,offTimes,finalX,finalXC,endTime] = LEAP_x0xc0_rk4_LSNoPlot03May2013Tester(DaysimeterDataFile,CBTminTarget,X0,XC0,time0,AvailStartTime,AvailEndTime,tau,maskLightLevel,onTime0,onTime1,onTime2,offTime0,offTime1,offTime2, MaxLightDuration, maskColor )
 % Input arguements
 % DaysimeterDataFile: file name of calibrated Daysimeter data [dateStr,timeStr,Lux,CLA,CS,Activity]
 % CBTminTarget: target CBTmin time in hours (0 <= CBTminTarget < 24)
@@ -38,6 +38,7 @@ AvailStartTime = str2num(AvailStartTime);
 AvailEndTime = str2num(AvailEndTime);
 tau = str2num(tau);
 maskLightLevel = str2num(maskLightLevel);
+MaxLightDuration = str2num(MaxLightDuration);
 
 onTime0 = datenum(onTime0,'dd-mmm-yyyy HH:MM');
 onTime1 = datenum(onTime1,'dd-mmm-yyyy HH:MM');
@@ -91,8 +92,8 @@ csTimeRelHours = (Time - floor(time0))*24;
 [ CSavg, timeCSavg ] = ReSampleCS( initialStartTime, increment, csTimeRelHours, sRate, CS, Time );
 
 % Add in Light Mask exposure times
-redFlag = round(100*(maskLightLevel*100 - floor(maskLightLevel*100)))== 12;
-if not(redFlag) % if maskLightLevel*100 has a remainder of 0.12 it's a red mask so do nothing
+%redFlag = round(100*(maskLightLevel*100 - floor(maskLightLevel*100)))== 12;
+if strcmp(maskColor, 'blue') == 1; %not(redFlag) % if maskLightLevel*100 has a remainder of 0.12 it's a red mask so do nothing
     q0 = (timeCSavg > onTime0 & timeCSavg < offTime0);
     CSavg(q0) = maskLightLevel;
     q1 = (timeCSavg > onTime1 & timeCSavg < offTime1);
@@ -175,7 +176,7 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoop( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount );
+[ onTimes, offTimes ] = PrescriptionLoop3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration );
 
 %finalpX = pX; % Only for plotting
 %finalpXC = pXC; % Only for plotting

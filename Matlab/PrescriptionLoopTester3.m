@@ -43,7 +43,11 @@ for i1 = 1:numIterations
     if  (timeAdj(mod(AvailStartTime + increment,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
         ActStartTime = mod(ActEndTime - MaxLightDuration, 24); %If ActEndTime - MaxLightDuration is later than the AvailStartTime + increment, start at ActEndTime - MaxLightDuration.
     else
+<<<<<<< HEAD
         ActStartTime = mod(AvailStartTime + increment, 24); %Else start at AvailStartTime + increment.
+=======
+        ActStartTime = mod(AvailStartTime + .25 , 24);
+>>>>>>> 8815aa0221e6d4401e60b41bbbc9f29788591f62
     end
     
     if (timeAdj(ActStartTime) > timeAdj(ActEndTime)) %Now ActEndTime is no more than MaxLightDuration ahead of ActStartTime. 

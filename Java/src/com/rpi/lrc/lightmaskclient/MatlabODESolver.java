@@ -47,7 +47,6 @@ public class MatlabODESolver extends PApplet{
 		calc_complete = false;
 		maskManager = new LightMaskManager();  
 	    log = new Vector(6, 6);
-	    //logArray = new String [10];
 	    workingDirectory = new String(System.getProperty("user.dir")+ "\\src\\");  
 	    tempDir = new File(workingDirectory);  
 	}
@@ -59,18 +58,21 @@ public class MatlabODESolver extends PApplet{
 		logArray = loadStrings(workingDirectory + "data\\Lightmask_initial_values.txt");
 		onTimes = new Calendar[8];
 		offTimes = new Calendar[8];
-		if (tempDir.exists()) {  //Grab file location for matlab program
+		
+		//Grab file location for matlab program
+		if (tempDir.exists()) {  
 		    matlabconsole = new String(workingDirectory + "CBTmin.exe");
 		}
 		else {
 			ErrorLog.write("CMTmin file missing");
 		}
-		try {   //Run matlab program from the command line in a new process
+		
+		//Run matlab program from the command line in a new process
+		try {   
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
 					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
 		} 
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			JOptionPane.showMessageDialog(LightMaskClient.getFrame(), "IO.");
 			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
@@ -94,6 +96,7 @@ public class MatlabODESolver extends PApplet{
 					processed_file[0], logArray[2], logArray[7], logArray[8], "\""+logArray[9]+ "\"", logArray[3], logArray[4], logArray[5], logArray[6], logArray[10], logArray[11], logArray[12], logArray[13], logArray[14], logArray[15]).start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
 		parseResponse();
@@ -115,6 +118,7 @@ public class MatlabODESolver extends PApplet{
 	            int j = 0;
 	            BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
 	            try {
+	            	//Read the lines from the command window until they're null
 	                while ((line = br.readLine()) != null) {
 	                	System.out.println(line);
 	                	if (line.length() != 0 ){
