@@ -42,7 +42,7 @@ for i1 = 1:numIterations
     if (timeAdj(mod(AvailStartTime + .25,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
         ActStartTime = mod(ActEndTime - MaxLightDuration, 24);
     else
-        ActStartTime = mod(AvailStartTime + .25, 24);
+        ActStartTime = mod(AvailStartTime + .25 , 24);
     end
     
     if ActStartTime > ActEndTime 
