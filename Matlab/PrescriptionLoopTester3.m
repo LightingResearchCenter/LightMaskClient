@@ -1,10 +1,10 @@
-function [ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration )
+function [ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset )
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
 numIterations = numOfDaysLEAP*24/increment;
 CS = zeros(numIterations,1);
-AmountofLightReceived = 0; %Amount of light the Subject has received so far this run.
+CBTs = zeros(288, 1);
 
 %xTotal= zeros(numIterations,1); % Only for plotting
 %xcTotal = zeros(numIterations,1); % Only for plotting
@@ -36,20 +36,30 @@ for i1 = 1:numIterations
     %Update all Arrays and Initial Conditions
     
     ToD = mod(t1,24); %Time of Day
+   
+    CBTmin = XXC2CBTmin((t1/24 + absTimeOffset), pX, pXC);
+    ActEndTime = mod(CBTmin - 1, 24); %The treatment will end 1 hour prior to CBTmin
     
-    ActEndTime = mod(AvailEndTime - 1, 24);
-    
-    if (timeAdj(mod(AvailStartTime + .25,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
-        ActStartTime = mod(ActEndTime - MaxLightDuration, 24);
+    if  (timeAdj(mod(AvailStartTime + increment,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
+        ActStartTime = mod(ActEndTime - MaxLightDuration, 24); %If ActEndTime - MaxLightDuration is later than the AvailStartTime + increment, start at ActEndTime - MaxLightDuration.
     else
-        ActStartTime = mod(AvailStartTime + .25, 24);
+        ActStartTime = mod(AvailStartTime + increment, 24); %Else start at AvailStartTime + increment.
     end
     
-    if ActStartTime > ActEndTime 
-        Available = (ToD >= ActStartTime || ToD < ActEndTime);
+    if (timeAdj(ActStartTime) > timeAdj(ActEndTime)) %Now ActEndTime is no more than MaxLightDuration ahead of ActStartTime. 
+        Available = 0; % if 
+        %Available = ((ToD >= ActStartTime || ToD < ActEndTime));
     else 
-        Available = (ToD >= ActStartTime && ToD < ActEndTime);
+        Available = ((timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime)));
     end
+    
+%     if (Available == 1) %Used for testting
+%         timeNow = datestr(t1/24 + absTimeOffset)
+%         ToD = ToD
+%         AvailStartTime = AvailStartTime
+%         ActStartTime = ActStartTime
+%         CBTmin = CBTmin
+%     end
     
     if ((withLight < withoutLight) && (Available == 1))
         CS(i1) = maskLightLevel;
@@ -65,9 +75,13 @@ for i1 = 1:numIterations
         pXC = pXC2;
     end     
     
-    if (CS(i1) == maskLightLevel && (i1 > 2))
-        AmountofLightReceived = AmountofLightReceived +1; %Notes the increase in the amount of light received.
+    if (CS(i1) == maskLightLevel)
+        CBTs(i1) = CBTmin;
     end
+    
+%     if (Available == 1) &Used for testing
+%         CSnow = CS(i1)
+%     end
     
     % ARRAYS FOR THE LIGHT ON AND OFF TIMES
     if (CS(i1) == maskLightLevel && i1==1)
@@ -90,6 +104,9 @@ for i1 = 1:numIterations
     
 end % end P loop
 
+% x = 1:1:288; %for testing
+% y = CBTs(x);
+% plot(x,y);
 
 end
 
