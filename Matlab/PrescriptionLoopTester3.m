@@ -40,24 +40,20 @@ for i1 = 1:numIterations
     CBTmin = XXC2CBTmin((t1/24 + absTimeOffset), pX, pXC);
     ActEndTime = mod(CBTmin - 1, 24); %The treatment will end 1 hour prior to CBTmin
     
-    if  (timeAdj(mod(AvailStartTime + increment,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
+    if  (timeAdj(mod(AvailStartTime,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
         ActStartTime = mod(ActEndTime - MaxLightDuration, 24); %If ActEndTime - MaxLightDuration is later than the AvailStartTime + increment, start at ActEndTime - MaxLightDuration.
     else
-<<<<<<< HEAD
-        ActStartTime = mod(AvailStartTime + increment, 24); %Else start at AvailStartTime + increment.
-=======
-        ActStartTime = mod(AvailStartTime + .25 , 24);
->>>>>>> 8815aa0221e6d4401e60b41bbbc9f29788591f62
+        ActStartTime = mod(AvailStartTime, 24); %Else start at AvailStartTime + increment.
     end
     
     if (timeAdj(ActStartTime) > timeAdj(ActEndTime)) %Now ActEndTime is no more than MaxLightDuration ahead of ActStartTime. 
-        Available = 0; % if 
+        Available = 0; 
         %Available = ((ToD >= ActStartTime || ToD < ActEndTime));
     else 
         Available = ((timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime)));
     end
     
-%     if (Available == 1) %Used for testting
+%     if (ToD >= AvailStartTime) %Used for testting
 %         timeNow = datestr(t1/24 + absTimeOffset)
 %         ToD = ToD
 %         AvailStartTime = AvailStartTime
@@ -83,7 +79,7 @@ for i1 = 1:numIterations
         CBTs(i1) = CBTmin;
     end
     
-%     if (Available == 1) &Used for testing
+%     if (Available == 1) %Used for testing
 %         CSnow = CS(i1)
 %     end
     
@@ -108,9 +104,9 @@ for i1 = 1:numIterations
     
 end % end P loop
 
-% x = 1:1:288; %for testing
-% y = CBTs(x);
-% plot(x,y);
+x = 1:1:288; %for testing
+y = CBTs(x);
+plot(x,y);
 
 end
 

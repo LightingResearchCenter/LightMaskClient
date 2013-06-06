@@ -93,7 +93,7 @@ csTimeRelHours = (Time - floor(time0))*24;
 
 % Add in Light Mask exposure times
 %redFlag = round(100*(maskLightLevel*100 - floor(maskLightLevel*100)))== 12;
-if strcmp(maskColor, 'blue') == 1; %not(redFlag) % if maskLightLevel*100 has a remainder of 0.12 it's a red mask so do nothing
+if strcmp(maskColor, 'red') ~= 1; %not(redFlag) % if maskLightLevel*100 has a remainder of 0.12 it's a red mask so do nothing
     q0 = (timeCSavg > onTime0 & timeCSavg < offTime0);
     CSavg(q0) = maskLightLevel;
     q1 = (timeCSavg > onTime1 & timeCSavg < offTime1);
@@ -176,7 +176,7 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoop3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration );
+[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset );
 
 %finalpX = pX; % Only for plotting
 %finalpXC = pXC; % Only for plotting
