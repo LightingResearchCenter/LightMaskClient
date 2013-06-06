@@ -41,7 +41,8 @@ public class MatlabODESolver extends PApplet{
 	String workingDirectory;
 	String[] processed_file;
 	File tempDir;
-	String[] labels = {"Subject ID", "CBTmin", "CBTminTarget", "availStartTime", "availEndTime", "Tau", "maskLightLevel (CS)", "X", "XC0", "time0"};
+	boolean isParseComplete = false;
+	String[] labels = {"Subject ID", "CBTmin", "CBTminTarget", "availStartTime", "availEndTime", "Tau", "maskLightLevel (CS)", /*"maxDur", "Mask Color",*/ "X", "XC0", "time0"};
 	
 	public MatlabODESolver(){
 		calc_complete = false;
@@ -53,35 +54,43 @@ public class MatlabODESolver extends PApplet{
 	
 	//Uses CBTmin Matlab console file for the initial calculation
 	public void calculateInitial(String CBTminInitial,String CBTminTarget, String starttime, String endtime, String tau, String lightlevel, String maxDur, String maskColor){
+		//LightMaskClient.setMainText(workingDirectory);
 		LightMaskClient.calcStatus(false);
 		processed_file = loadStrings(workingDirectory + "data\\daysimeter_processed_path.txt");
 		logArray = loadStrings(workingDirectory + "data\\Lightmask_initial_values.txt");
 		onTimes = new Calendar[8];
 		offTimes = new Calendar[8];
+		//LightMaskClient.setMainText(workingDirectory);
+		
+		File CBTminPath = new File(workingDirectory + "CBTmin.exe");
 		
 		//Grab file location for matlab program
-		if (tempDir.exists()) {  
+		if (CBTminPath.isFile()) {  
 		    matlabconsole = new String(workingDirectory + "CBTmin.exe");
 		}
 		else {
+			LightMaskClient.setMainText("CMTmin file missing");
 			ErrorLog.write("CMTmin file missing");
 		}
 		
 		//Run matlab program from the command line in a new process
 		try {   
+			LightMaskClient.setMainText("PreCalc");
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
 					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
+			LightMaskClient.setMainText("PostCalc");
 		} 
 		catch (IOException e) {
 			JOptionPane.showMessageDialog(LightMaskClient.getFrame(), "IO.");
 			ErrorLog.write(e.getMessage());
 			e.printStackTrace();
 		}
-	    parseResponse();
+	    parseResponse(); 
 	}
 	
 	//Uses x0xc0 Matlab console file for the calculation
 	public void calculate(){
+		LightMaskClient.setMainText(workingDirectory);
 		LightMaskClient.calcStatus(false);
 		logArray = loadStrings(workingDirectory + "data\\Lightmask_last_values.txt");
 		processed_file = loadStrings(workingDirectory + "data\\daysimeter_processed_path.txt");
@@ -90,10 +99,17 @@ public class MatlabODESolver extends PApplet{
 		if (tempDir.exists()) {  
 		    matlabconsole = new String(workingDirectory + "x0xc0.exe");
 		}
+		else {
+			LightMaskClient.setMainText("File not found");
+		}
 		try {
-			System.out.println(processed_file[0]+" "+logArray[2]+" "+logArray[7]+" "+logArray[8]+" "+logArray[9]+" "+logArray[3]+" "+logArray[4]+" "+logArray[5]+" "+logArray[6]+ " "+ logArray[10]+ " "+ logArray[11]+ " "+ logArray[12]+ " "+ logArray[13]+ " "+ logArray[14]+ " "+ logArray[15]);
+			System.out.println(processed_file[0]+" "+logArray[2]+" "+logArray[7]+" "+logArray[8]+" "+logArray[9]+" "+
+				logArray[3]+" "+logArray[4]+" "+logArray[5]+" "+logArray[6]+ " "+ logArray[10]+ " "+ logArray[11]+ " "+ 
+				logArray[12]+ " "+ logArray[13]+ " "+ logArray[14]+ " "+ logArray[15]);
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
-					processed_file[0], logArray[2], logArray[7], logArray[8], "\""+logArray[9]+ "\"", logArray[3], logArray[4], logArray[5], logArray[6], logArray[10], logArray[11], logArray[12], logArray[13], logArray[14], logArray[15]).start();
+					processed_file[0], logArray[2], logArray[7], logArray[8], "\""+logArray[9]+ "\"", logArray[3], 
+					logArray[4], logArray[5], logArray[6], logArray[10], logArray[11], logArray[12], logArray[13], 
+					logArray[14], logArray[15]).start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			ErrorLog.write(e.getMessage());
@@ -108,6 +124,7 @@ public class MatlabODESolver extends PApplet{
 		stdin = process.getOutputStream();
 	    stdout = process.getInputStream();
 	    
+	    //LightMaskClient.setMainText("PreParse");
 		//Create new thread to redirect stdout
 	    new Thread(new Runnable() {
 	        public void run() {
@@ -149,8 +166,10 @@ public class MatlabODESolver extends PApplet{
 	                		}
 	                	}
 	                }
+	                //LightMaskClient.setMainText("PostRead");
 	                //if the calculation completed successfully and returned on/off times
 	                if (formatResponse()){
+	                	LightMaskClient.setMainText("PostFormat");
 		                saveStrings(workingDirectory + "\\data\\Lightmask_last_values.txt", logArray);
 		                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		                Calendar cal = Calendar.getInstance();
@@ -193,8 +212,24 @@ public class MatlabODESolver extends PApplet{
 	            	ErrorLog.write(e.getMessage());
 	                e.printStackTrace();
 	            }
+	            //LightMaskClient.setMainText("PostParse");
+	            isParseComplete = true;
 	        }
 	    }).start();
+	    
+	    //LightMaskClient.setMainText("Test");
+	    int n = 4;
+	    while (!isParseComplete) {
+	    	if (n >= 3) {
+	    		LightMaskClient.setMainText("Calculating on/off times, please wait");
+	    		n = 0;
+	    	}
+	    	else {
+	    		LightMaskClient.appendMainText(".");
+	    		n++;
+	    	}
+	    	delay(500);
+	    }
 	    
 	    //Redirect stdin
 	    /*new Thread(new Runnable() {

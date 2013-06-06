@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.deploytool" plugin-version="1.0">
-  <configuration target="target.standalone" target-name="Console Application" name="CBTmin" location="C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\StandAloneExe" file="C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\StandAloneExe\CBTmin.prj" build-checksum="1110655432">
-    <param.project.name>C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\StandAloneExe\CBTmin.prj</param.project.name>
+  <configuration target="target.standalone" target-name="Console Application" name="CBTmin" location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab" file="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin.prj" preferred-package-type="package.type.exe" build-checksum="3226400909" preferred-package-location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin\distrib">
+    <param.project.name>C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin.prj</param.project.name>
     <param.target.type>Console Application</param.target.type>
     <param.appname>CBTmin</param.appname>
     <param.intermediate>${PROJECT_ROOT}\CBTmin\src</param.intermediate>
@@ -61,24 +61,36 @@
       <file>${PROJECT_ROOT}\LEAP_CBTmin_rk4_NoPlot20Mar2013.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>${PROJECT_ROOT}\DaysimLoop.m</file>
+      <file>${PROJECT_ROOT}\InitializedLoop.m</file>
+      <file>${PROJECT_ROOT}\PrescriptionLoopTester3.m</file>
+      <file>${PROJECT_ROOT}\PrintOnOffArrays.m</file>
+      <file>${PROJECT_ROOT}\ReadDaysimDataFromFile.m</file>
+      <file>${PROJECT_ROOT}\ReSampleCS.m</file>
       <file>${PROJECT_ROOT}\rk4P.m</file>
       <file>${PROJECT_ROOT}\rk4stepperP.m</file>
       <file>${PROJECT_ROOT}\xprime.m</file>
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file name="readme.txt" location="${PROJECT_ROOT}\CBTmin\distrib" optional="true">C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\StandAloneExe\CBTmin\distrib\readme.txt</file>
-      <file name="CBTmin.exe" location="${PROJECT_ROOT}\CBTmin\distrib" optional="false">C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\StandAloneExe\CBTmin\distrib\CBTmin.exe</file>
+      <file name="CBTmin.exe" location="${PROJECT_ROOT}\CBTmin\distrib" optional="false">C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin\distrib\CBTmin.exe</file>
+      <file name="readme.txt" location="${PROJECT_ROOT}\CBTmin\distrib" optional="true">C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin\distrib\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
       <root>C:\Program Files\MATLAB\R2012a</root>
       <path>
-        <directory>C:\Users\bierma2\Documents\MATLAB</directory>
-        <directory>C:\Daysimeter2012\SwedishEnergyAgency2013</directory>
-        <directory>C:\AndyOct2012\CircadianResearch\NIH_SleepMask\LRCmask\LEAP_Matlab\ODEsolver</directory>
-        <directory>C:\AndyOct2012\MatLabWork\PhotometryCalc05Jul05\CircadianOct2011</directory>
-        <directory>C:\AndyOct2012\MatLabWork\PhotometryCalc05Jul05</directory>
+        <directory>C:\Users\pentla\Documents\MATLAB</directory>
+        <directory>\\root\Public\malhor\Matlab Files\Lemur Study</directory>
+        <directory>\\root\Public\lanchj\DayHourAverages</directory>
+        <directory>\\root\Public\malhor\Matlab Files\Troy ALZ\Sleep Info</directory>
+        <directory>P:\malhor\Matlab Files</directory>
+        <directory>P:\malhor\Matlab Files\Lemur Study</directory>
+        <directory>\\root\Public\malhor\Matlab Files\Case Western\Sleep Analysis</directory>
+        <directory>P:\malhor\Matlab Files\Case Western</directory>
+        <directory>P:\malhor\Matlab Files\Case Western\Sleep Analysis</directory>
+        <directory>\\ROOT\resources\!Matlab\daysimeter and dimesimeter\Standard Dimesimeter\Supporting Functions</directory>
+        <directory>${MATLAB_ROOT}\toolbox\matlab\custom</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\demos</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\graph2d</directory>
         <directory>${MATLAB_ROOT}\toolbox\matlab\graph3d</directory>
