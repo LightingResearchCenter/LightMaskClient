@@ -26,9 +26,9 @@ import processing.core.PFont;
 
 public class LightMaskClient extends PApplet {
 	
-	PFont f20, f28;
-	static TextArea taMain;
-	Panel mainPanel;
+	PFont f20, f28;				//Variables for processing font
+	static TextArea taMain;		//Initializes the main text area for output 
+	Panel mainPanel;			//The main window of the program
 	static Date date = new Date("05/15/2012 13:12");
 
 	//Colored Buttons
@@ -40,6 +40,7 @@ public class LightMaskClient extends PApplet {
 	final int rightButtonX = 215;
 	final int buttonY = 70;
 	
+	//Dropdown Research Menu
 	DropdownMenu ddm;
 
 	//StatusBars
@@ -53,36 +54,33 @@ public class LightMaskClient extends PApplet {
 	//Device Managers
 	static DaysimDownload download;
 	static LightMaskManager maskManager;
-	FileDialog fileSelector;
+	//FileDialog fileSelector;
 	static MatlabODESolver odesolver;
 	
+	//Starts the processing main applet
 	public static void main(String _args[]) {
 		PApplet.main(new String[] { com.rpi.lrc.lightmaskclient.LightMaskClient.class.getName() });
 	}	
 
 	//Configure window and text
 	public void setup() {
-		checkIfRunning();		
+		checkIfRunning();					//Checks if there is another instance of the program running
 		
-		size(400, 500);
-		//background(0);
-		
-		f28 = loadFont("Calibri-28.vlw"); 
+		size(400, 500);						//Sets the size of the main window
+		f28 = loadFont("Calibri-28.vlw"); 	//Loads the fonts 
 		f20 = loadFont("Calibri-20.vlw");
-		strokeWeight(5);
+		strokeWeight(5);					//Sets the stroke weight of the font
 		
-		DaysimStatus = new StatusBar(this, "Daysimeter", 0, 220);
-		LightMaskStatus = new StatusBar(this, "LightMask", 215, 184);
-		download = new DaysimDownload(this);
-		maskManager = new LightMaskManager();
-		fileSelector = new FileDialog();
-		odesolver = new MatlabODESolver();
-		ddm = new DropdownMenu(this);
+		DaysimStatus = new StatusBar(this, "Daysimeter", 0, 220);		//Creates a status bar for the Daysimeter
+		LightMaskStatus = new StatusBar(this, "LightMask", 215, 184);	//Creates a status bar for the LightMask
+		download = new DaysimDownload(this);							//Sets up the download for the daysimeter data
+		maskManager = new LightMaskManager();							//Creates a LightMask Manager
+		odesolver = new MatlabODESolver();								//Initializes the MatlabODE solver
+		ddm = new DropdownMenu(this);									//Creates the dropdown menu
 		
-		initTextArea();
-		initButtons();
-		
-		setPaths();
+		initTextArea();		//Creates the text area
+		initButtons();		//Creates the buttons
+		setPaths();			//Sets the paths for the log file and the raw/processed data files
 	} 
 	
 	//Main Program Loop
@@ -90,11 +88,14 @@ public class LightMaskClient extends PApplet {
 		frameRate(20);
 		background(0);
 		textFont(f28, 28);
+		
 		downloadButton.display();
 		programButton.display();
 		statusbar_display();
+		
 		dayConnected = find_daysimeter();
 		if (!maskConnected){
+			//Tries to find the mask if it isn't connected
 			maskConnected = maskManager.find_mask();
 		}
 	}
@@ -123,14 +124,17 @@ public class LightMaskClient extends PApplet {
 				}
 				else if (maskConnected){
 					taMain.setText("Calculating on/off times, please wait...");
-					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");
+					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
+					
 					//If this is the initial calculation use CBTmin file
 					if (firstRun[0].toLowerCase().contains("true")){
-						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");
+						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");	//Gets initial values from file
 						appendMainText("\nInitial Run");
-						odesolver.calculateInitial(values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8]);
-						firstRun[0] = "false";
-						saveStrings("/src/data/initial_run_flag.txt", firstRun);
+						odesolver.calculateInitial(values[1], values[2], values[3], values[4],		//Calculates the values for the next run
+								values[5], values[6], values[7], values[8]);
+						
+						firstRun[0] = "false";										
+						saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
 					}
 					//else use x0xc0 file
 					else{
@@ -180,22 +184,25 @@ public class LightMaskClient extends PApplet {
 				showPulseSettingsDialog();
 			}
 			
+			//Creates a dialog to set the initial run values
 			else if (event.getValue() == 7) {
-				showWizardDialog();
+				showInitRunValuesDialog();
 			}
 			
+			//Sets the mask time and creates dialogs to set the mask pulse settings & initial run values
 			else if (event.getValue() == 8) {
 				String date = year() + "," + month() + "," + day() + "," + hour() + "," + minute();
 				maskManager.sendCommand("setClock:" + date + " !");
 				showPulseSettingsDialog();
-				showWizardDialog();
+				showInitRunValuesDialog();
 			}
 
-			
 			ddm.researchTools.setCaptionLabel("Research Menu");
 		}
 	}
 	
+	//Shows the research menu if SHIFT + R is pressed, 
+	//and hides it if SHIFT + S is pressed
 	public void keyPressed() {
 		if (key == 'R') {
 			ddm.researchTools.show();
@@ -212,9 +219,13 @@ public class LightMaskClient extends PApplet {
 	private void initButtons(){		
 		strokeWeight(5);
 		rectMode(CENTER);
+		
+		//Creates download data button
 		downloadButton = new Button(this, leftButtonX, buttonY, "DOWNLOAD\nDATA", ddm.cp5);
 		downloadButton.setRecColor(255, 0, 0);
 		downloadButton.setStrokeColor(150, 0, 0);
+		
+		//Creates program mask button
 		programButton = new Button (this, rightButtonX, buttonY, "PROGRAM\nMASK", ddm.cp5);
 		programButton.setRecColor(0, 125, 0);
 		programButton.setStrokeColor(0, 75, 0);
@@ -222,11 +233,13 @@ public class LightMaskClient extends PApplet {
 	
 	//Set up main text for displaying information
 	private void initTextArea(){
+		//Creates and sets up the text area
 		taMain = new TextArea("Welcome to the Daysimeter and Lightmask Programing Station.", 5, 5, 3);
 		taMain.setFont(new Font("Calibri", Font.PLAIN, 18));
 		taMain.setBackground(Color.darkGray);
 		taMain.setForeground(Color.white);
 		
+		//Creates the main panel and add the text area to it
 		mainPanel = new Panel();  
 		mainPanel.setLayout(new BorderLayout());
 		add(mainPanel);
@@ -244,11 +257,13 @@ public class LightMaskClient extends PApplet {
 		LightMaskStatus.display();
 	}
 	
+	//Creates the pulse settings dialog in a new window (frame)
 	void showPulseSettingsDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
 		  PulseSettings p = new PulseSettings(this, f, 175, 200);
 		  f.add(p);
 		  p.init();
+		  
 		  f.setTitle("Light Pulse Settings");
 		  f.setSize(p.w, p.h);
 		  f.setLocation(100, 100);
@@ -256,12 +271,14 @@ public class LightMaskClient extends PApplet {
 		  f.setVisible(true);
 		}
 	
-	void showWizardDialog() {
-		  Frame f = new Frame("Light Pulse Settings");
+	//Creates the initial run values dialog in a new window (frame)
+	void showInitRunValuesDialog() {
+		  Frame f = new Frame("Initial Run Values");
 		  InitialRun w = new InitialRun(this, f, 175, 390);
 		  f.add(w);
 		  w.init();
-		  f.setTitle("Initial Run Wizard");
+		  
+		  f.setTitle("Initial Run Values");
 		  f.setSize(w.w, w.h);
 		  f.setLocation(100, 100);
 		  f.setResizable(false);
@@ -310,7 +327,9 @@ public class LightMaskClient extends PApplet {
 	    return "nothing";
 	}
 	
+	//Loads a processed file into the program
 	public void loadFile () {
+		FileDialog fileSelector = new FileDialog();
 		taMain.setText("Select File to Load");
 		String[] loadPath = new String[1];
 		loadPath[0] = fileSelector.selectInput("Select Processed File");
@@ -328,11 +347,13 @@ public class LightMaskClient extends PApplet {
 ////Getters and setters
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	//Checks the mask schedule and outputs it to the text area
 	public void checkSchedule () {
 		if( maskConnected){
 			taMain.setText("                  LightMask Schedule\n");
 			taMain.append("             ON                               OFF\n");
 			maskManager.sendCommand("getOn:!");
+			
 			//allow MSP430 time to respond
 			try {
 			    Thread.sleep(500);
@@ -340,12 +361,15 @@ public class LightMaskClient extends PApplet {
 			    Thread.currentThread().interrupt();
 			}
 			maskManager.sendCommand("getOff:!");
+			
 			//allow MSP430 time to respond
 			try {
 			    Thread.sleep(500);
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
 			}
+			
+			//Adds values to text area if there are values
 			for (int i = 0; i < 7; i++){
 				if (!maskManager.getMaskSchedule(i).isEmpty()){
 					taMain.append(i + maskManager.getMaskSchedule(i));
@@ -357,8 +381,11 @@ public class LightMaskClient extends PApplet {
 		}
 	}
 	
+	//Checks the current pulse settings of the mask
 	public void checkPulseSettings () {
 		taMain.setText("");
+		
+		//Get the pulse duration and wait
 		maskManager.sendCommand("getDur:!");
 		try {
 			Thread.sleep(100);
@@ -366,6 +393,8 @@ public class LightMaskClient extends PApplet {
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		//Get the pulse intensity and wait
 		maskManager.sendCommand("getInt:!");
 		try {
 			Thread.sleep(100);
@@ -373,11 +402,16 @@ public class LightMaskClient extends PApplet {
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		//Get the pulse repetition period
 		maskManager.sendCommand("getRep:!");
 	}
 	
+	//Set the pulse settings
 	public void setPulseSettings (String pulseDur, String pulseInt, String pulseRep) {
 		taMain.setText("");
+		
+		//Set the pulse duration and wait
 		maskManager.sendCommand("pulseDur:" + pulseDur + "!");
 		try {
 			Thread.sleep(100);
@@ -385,6 +419,8 @@ public class LightMaskClient extends PApplet {
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		//Set the pulse intensity and wait
 		maskManager.sendCommand("pulseInt:" + pulseInt + "!");
 		try {
 			Thread.sleep(100);
@@ -392,24 +428,26 @@ public class LightMaskClient extends PApplet {
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		maskManager.sendCommand("pulseRep:" + pulseRep + "!");
 		
-		//checkPulseSettings();
+		//Set the pulse repetition period
+		maskManager.sendCommand("pulseRep:" + pulseRep + "!");
 	}
 	
 	public static LightMaskManager getMaskMan(){
 		return maskManager;
 	}
 	
+	//Check if the calculation has finished
 	public static void calcStatus(boolean status){
 		calcComplete = status;
 	}
 	
-	
+	//Sets the text in the text area
 	public static void setMainText(String mtext){
 		taMain.setText(mtext);
 	}
 	
+	//Appends text in the text area
 	public static void appendMainText(String atext){
 		taMain.append(atext);
 	}	
@@ -421,7 +459,8 @@ public class LightMaskClient extends PApplet {
 	private static final int PORT = 9999;
 	private static ServerSocket socket;    
 
-	private static void checkIfRunning() {
+	//Only runs the program if it is not already running
+	private static void checkIfRunning() {  
 	  try {
 	    //Bind to localhost adapter with a zero connection queue 
 	    socket = new ServerSocket(PORT,0,InetAddress.getByAddress(new byte[] {127,0,0,1}));
@@ -438,30 +477,27 @@ public class LightMaskClient extends PApplet {
 	  }
 	}
 	
-	static boolean isInRange (float n, float min, float max) {
-		return ((n > min) && (n < max));
-	}
-	
+	//Sets the paths for the daysimeter files and the log files
 	void setPaths () {
 		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
 		String[] settingsStrings = loadStrings(settingsPath);
 		FileDialog fileBrowser = new FileDialog();
 		String daySavePath, logSavePath;
 		
-		println(settingsStrings.length);
+		//Create a dialog for user to choose a folder for Daysim files if it doesn't exist
 		if (settingsStrings.length <= 1) {
-			println("foo");
-			daySavePath = fileBrowser.selectFolder("Choose Raw Folder");
+			daySavePath = fileBrowser.selectFolder("Choose Daysim Folder");
 			settingsStrings = append(settingsStrings, daySavePath);
 		}
 		
+		//Create a dialog for user to choose a folder for log files if it doesn't exist
 		if (settingsStrings.length <= 2) {
 			logSavePath = fileBrowser.selectFolder("Choose Log Folder");
 			settingsStrings = append(settingsStrings, logSavePath);
 			saveStrings(settingsPath, settingsStrings);
 		}
 		ErrorLog l = new ErrorLog();
-		l.setLogPath();
+		l.setLogPath();					//Sets the path for the log files
 		
 	}
 }
