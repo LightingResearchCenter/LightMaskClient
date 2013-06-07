@@ -40,15 +40,24 @@ offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 0.25; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
+javaOffset = 719529; %Offset from matlab datstr start to java epoch
+ms2d = 86400000;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Read Daysimeter data from file
-[dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
+%Read Daysimeter data from file
+[dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
 
-[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
+%[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
+Time = JT/ms2d + javaOffset;
+
+% M = load(pathFileName);
+% Time = M(:,1)';
+% CS = M(:,2)';
+
+
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
 initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
@@ -73,7 +82,15 @@ csTimeRelHours = (Time - floor(Time(1)))*24;
 %hold off
 %datetick2('x')
 
-[ t1, t2, dX, dXC ] = InitializedLoop( initialStartTime, increment, CBTminInitial );
+% Initialize dLoop start and end times for each iteration
+t1 = initialStartTime; % hours
+t2 = t1 + increment; % simulation interval end time, hours
+
+X0 = -cos(2*pi*(t1/24-CBTminInitial/24)); %Initial value X of the sinusoid that is trying to mimic the Target
+XC0 = sin(2*pi*(t1/24-CBTminInitial/24)); %Initial value Xc of the sinusoid that is trying to mimic the Target
+
+dX = X0; %daysimeter X starts at initial X given
+dXC = XC0; %daysimeter XC starts at initial XC given
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Daysimeter Loop %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [ t1, t2, tend, xarray, xcarray, dX, dXC ] = DaysimLoop( CSavg, dX, dXC, tau, t1, t2, nsteps, increment );
@@ -124,4 +141,5 @@ if (length(offTimes) < length(onTimes))
     offTimes = [offTimes (endTime+numOfDaysLEAP)];
 end
 
+% Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
