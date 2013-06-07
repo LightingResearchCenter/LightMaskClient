@@ -1,7 +1,6 @@
 package com.rpi.lrc.lightmaskclient;
 
 import java.awt.Frame;
-import java.io.OutputStream;
 
 import processing.core.PApplet;
 import controlP5.*;
