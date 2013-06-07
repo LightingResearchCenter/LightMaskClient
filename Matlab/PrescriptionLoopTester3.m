@@ -7,8 +7,9 @@ CS = zeros(numIterations,1);
 currLight = 0; %Used for keeping track of how much light the subject has received each night.
 
 %%%%%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%%%%%%
-CBTs = zeros(numIterations,1);
-timeLight = zeros(numIterations,1);
+% CBTs = zeros(numIterations,1);
+% timeLight = zeros(numIterations,1);
+% lightTime = zeros(numIterations,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %xTotal= zeros(numIterations,1); % Only for plotting
@@ -106,8 +107,9 @@ for i1 = 1:numIterations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
-    CBTs(i1) = CBTmin;
-    timeLight(i1) = CS(i1);
+%     CBTs(i1) = CBTmin;
+%     timeLight(i1) = CS(i1);
+%     lightTime(i1) = ToD;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     
     if (timeAdj(ToD) > timeAdj(CBTmin)) %Clears the amount of light received after CBTmin for the night has passed.
@@ -127,6 +129,9 @@ end % end P loop
 % hold all
 % z = timeLight(x);
 % plot(x,z);
+% hold all
+% w = lightTime(x);
+% plot(x,w);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end
