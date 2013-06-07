@@ -372,3 +372,69 @@ Off Times:
 17-Mar-2013 12:01:00
 18-Mar-2013 12:01:00
 
+Log from: 06/07/2013 16:06:08
+Subject ID: 999
+CBTmin: 3
+CBTminTarget: 7
+availStartTime: 22
+availEndTime: 3
+Tau: 24.2
+maskLightLevel (CS): 0.5
+maxDur: 5
+Mask Color: blue
+X:  0.2333
+XC0:  0.9082
+time0: 14-Mar-2013 12:15:00
+On Times:
+15-Mar-2013 04:15:00
+16-Mar-2013 04:15:00
+17-Mar-2013 04:30:00
+Off Times:
+15-Mar-2013 04:30:00
+16-Mar-2013 04:45:00
+17-Mar-2013 05:00:00
+
+Log from: 06/07/2013 16:12:45
+Subject ID: 999
+CBTmin: 3
+CBTminTarget: 7
+availStartTime: 22
+availEndTime: 3
+Tau: 24.2
+maskLightLevel (CS): 0.5
+maxDur: 5
+Mask Color: blue
+X:  0.8791
+XC0:  0.6507
+time0: 14-Mar-2013 12:15:00
+On Times:
+14-Mar-2013 22:00:00
+15-Mar-2013 22:00:00
+16-Mar-2013 23:30:00
+Off Times:
+15-Mar-2013 02:45:00
+16-Mar-2013 03:00:00
+17-Mar-2013 04:00:00
+
+Log from: 06/07/2013 16:13:06
+Subject ID: 999
+CBTmin: 3
+CBTminTarget: 7
+availStartTime: 22
+availEndTime: 3
+Tau: 24.2
+maskLightLevel (CS): 0.5
+maxDur: 5
+Mask Color: blue
+X: NaN
+XC0: NaN
+time0: 15-Mar-2013 13:15:00
+On Times:
+16-Mar-2013 12:00:00
+17-Mar-2013 12:00:00
+18-Mar-2013 12:00:00
+Off Times:
+16-Mar-2013 12:01:00
+17-Mar-2013 12:01:00
+18-Mar-2013 12:01:00
+
