@@ -4,7 +4,12 @@ function [ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increme
 
 numIterations = numOfDaysLEAP*24/increment;
 CS = zeros(numIterations,1);
-CBTs = zeros(288, 1);
+currLight = 0; %Used for keeping track of how much light the subject has received each night.
+
+%%%%%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%%%%%%
+CBTs = zeros(numIterations,1);
+timeLight = zeros(numIterations,1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %xTotal= zeros(numIterations,1); % Only for plotting
 %xcTotal = zeros(numIterations,1); % Only for plotting
@@ -47,19 +52,22 @@ for i1 = 1:numIterations
     end
     
     if (timeAdj(ActStartTime) > timeAdj(ActEndTime)) %Now ActEndTime is no more than MaxLightDuration ahead of ActStartTime. 
-        Available = 0; 
+        Available = 0; %This will only occour if the ActStartTime is too close to the CBTmin
         %Available = ((ToD >= ActStartTime || ToD < ActEndTime));
     else 
-        Available = ((timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime)));
+        Available = (timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime) && (currLight < MaxLightDuration)); %Available if ActStartTime <= ToD < ActEndTime and the max dosage for the night has not been reached.
     end
-    
-%     if (ToD >= AvailStartTime) %Used for testting
-%         timeNow = datestr(t1/24 + absTimeOffset)
+ 
+%%%%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%%%    
+%     if (Available == 1) %For Testing purposes
+%         currTime = datestr(t1/24 + absTimeOffset)
 %         ToD = ToD
-%         AvailStartTime = AvailStartTime
-%         ActStartTime = ActStartTime
+%         currLight = currLight
 %         CBTmin = CBTmin
+%         ActStartTime = ActStartTime
+%         ActEndTime = ActEndTime
 %     end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     if ((withLight < withoutLight) && (Available == 1))
         CS(i1) = maskLightLevel;
@@ -67,6 +75,7 @@ for i1 = 1:numIterations
         %xcTotal(i1) = pXC1; % Only for plotting
         pX = pX1;
         pXC = pXC1;
+        currLight = currLight + increment;
     else
         CS(i1) = offLightLevel;
         %xTotal(i1) = pX2; % Only for plotting
@@ -74,14 +83,6 @@ for i1 = 1:numIterations
         pX = pX2;
         pXC = pXC2;
     end     
-    
-    if (CS(i1) == maskLightLevel)
-        CBTs(i1) = CBTmin;
-    end
-    
-%     if (Available == 1) %Used for testing
-%         CSnow = CS(i1)
-%     end
     
     % ARRAYS FOR THE LIGHT ON AND OFF TIMES
     if (CS(i1) == maskLightLevel && i1==1)
@@ -97,6 +98,21 @@ for i1 = 1:numIterations
             offCount = offCount + 1;
         end    
     end
+
+%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%
+%     if (Available == 1) %For testing
+%         currCS = CS(i1)
+%     end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
+    CBTs(i1) = CBTmin;
+    timeLight(i1) = CS(i1);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+    
+    if (timeAdj(ToD) > timeAdj(CBTmin)) %Clears the amount of light received after CBTmin for the night has passed.
+        currLight = 0;
+    end
     
     % Increment Start and End Times for Each Iteration of the Loop
     t1 = t1+ increment;
@@ -104,9 +120,14 @@ for i1 = 1:numIterations
     
 end % end P loop
 
-x = 1:1:288; %for testing
-y = CBTs(x);
-plot(x,y);
+%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
+% x = 1:1:numIterations;
+% y = CBTs(x);
+% plot(x,y);
+% hold all
+% z = timeLight(x);
+% plot(x,z);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end
 
