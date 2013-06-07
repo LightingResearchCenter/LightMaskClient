@@ -15,7 +15,7 @@ public class ErrorLog extends PApplet{
 		logPath = settingsFile[2];
 	}
 	
-	static void write(String s) {
+	public static void write(String s) {
 		BufferedWriter writer;
 		try {
 			String fileName = logPath + "\\" + "log_" + month() + "-" + day() + "-" + year() + "_" +  hour() + "-" + minute() + ".txt";
