@@ -64,7 +64,7 @@ public class LightMaskClient extends PApplet {
 
 	//Configure window and text
 	public void setup() {
-		checkIfRunning();					//Checks if there is another instance of the program running
+		//checkIfRunning();					//Checks if there is another instance of the program running
 		
 		size(400, 500);						//Sets the size of the main window
 		f28 = loadFont("Calibri-28.vlw"); 	//Loads the fonts 
@@ -127,7 +127,7 @@ public class LightMaskClient extends PApplet {
 					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
 					
 					//If this is the initial calculation use CBTmin file
-					if (firstRun[0].toLowerCase().contains("true")){
+					if (firstRun[0].toLowerCase().contains("true") || firstRun[0].toLowerCase().contains("false")){
 						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");	//Gets initial values from file
 						appendMainText("\nInitial Run");
 						odesolver.calculateInitial(values[1], values[2], values[3], values[4],		//Calculates the values for the next run

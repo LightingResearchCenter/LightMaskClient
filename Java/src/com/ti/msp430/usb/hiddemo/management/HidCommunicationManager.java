@@ -43,6 +43,11 @@ package com.ti.msp430.usb.hiddemo.management;
 
 import java.io.File;
 
+import javax.swing.JOptionPane;
+
+import com.rpi.lrc.lightmaskclient.ErrorLog;
+import com.rpi.lrc.lightmaskclient.LightMaskClient;
+
 public class HidCommunicationManager {
 
 	/* TI Specific VID/PID */
@@ -73,9 +78,16 @@ public class HidCommunicationManager {
 
 	public HidCommunicationManager() {
 
-		String path = new File(".").getAbsolutePath();
-		System.load(path + "\\HidCommunicationManager.dll");
-		//System.load
+		String path = new File(".").getAbsolutePath() + "\\HidCommunicationManager.dll";
+		File f = new File(path);
+		if (f.isFile()) {
+			System.load(path);
+		}
+		else {
+			JOptionPane.showMessageDialog(LightMaskClient.getFrame(), "DLL file missing from:\n" + path);
+			ErrorLog.write("DLL file missing from:\n" + path);
+			System.exit(3);
+		}
 	}
 
 	/**
