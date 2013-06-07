@@ -42,7 +42,7 @@ public class MatlabODESolver extends PApplet{
 	String[] processed_file;
 	File tempDir;
 	boolean isParseComplete = false;
-	String[] labels = {"Subject ID", "CBTmin", "CBTminTarget", "availStartTime", "availEndTime", "Tau", "maskLightLevel (CS)", "maxDur", "Mask Color", "Milisec", "X", "XC0", "time0"};
+	String[] labels = {"Subject ID", "CBTmin", "CBTminTarget", "availStartTime", "availEndTime", "Tau", "maskLightLevel (CS)", "maxDur", "Mask Color", "X", "XC0", "time0"};
 	
 	public MatlabODESolver(){
 		calc_complete = false;
