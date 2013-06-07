@@ -183,8 +183,8 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 
 onTimes = onTimes/24 + absTimeOffset;
 offTimes = offTimes/24 + absTimeOffset;
-% Print On and Off time Arrays
 
+% Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
 
 % PLOTS
