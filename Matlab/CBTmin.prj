@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.deploytool" plugin-version="1.0">
-  <configuration target="target.standalone" target-name="Console Application" name="CBTmin" location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab" file="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin.prj" preferred-package-type="package.type.exe" build-checksum="3226400909" preferred-package-location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin\distrib">
+  <configuration target="target.standalone" target-name="Console Application" name="CBTmin" location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab" file="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin.prj" preferred-package-type="package.type.exe" build-checksum="3662850811" preferred-package-location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin\distrib">
     <param.project.name>C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\CBTmin.prj</param.project.name>
     <param.target.type>Console Application</param.target.type>
     <param.appname>CBTmin</param.appname>
@@ -58,7 +58,7 @@
       <param.user.defined.mcr.options />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\LEAP_CBTmin_rk4_NoPlot20Mar2013.m</file>
+      <file>${PROJECT_ROOT}\LEAP_CBTmin_rk4_NoPlot31May2013Tester.m</file>
     </fileset.main>
     <fileset.resources>
       <file>${PROJECT_ROOT}\DaysimLoop.m</file>
