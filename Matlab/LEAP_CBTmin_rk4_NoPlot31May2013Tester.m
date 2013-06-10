@@ -48,16 +48,10 @@ ms2d = 86400000; %millisecond to day conversion.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Read Daysimeter data from file
-[dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
+[dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
 
-%[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
-Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
-
-% M = load(pathFileName);
-% Time = M(:,1)';
-% CS = M(:,2)';
-
-
+[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
+%Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time. The 5/24 converts from UTC to EST, a different conversion will be needed for testing in different time zones.
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
 initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
