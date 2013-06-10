@@ -51,7 +51,7 @@ ms2d = 86400000; %millisecond to day conversion.
 [dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
 
 %[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
-Time = JT/ms2d + javaOffset; %converts java time to matlab time.
+Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
 
 % M = load(pathFileName);
 % Time = M(:,1)';
