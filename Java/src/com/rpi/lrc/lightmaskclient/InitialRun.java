@@ -74,9 +74,10 @@ public class InitialRun extends PApplet {
 		initValues[6] = maxDur = txt[6].getText();
 		
 		initValues[8] = "===============Only use numbers above this line\n" +
-				"Formate of this file is in order:\n" +
+				"Format of this file is in order:\n" +
 				"Subject ID\n" +
 				"CBTmin\n" +
+				"CBTmin target\n" +
 				"availStartTime\n" +
 				"availEndTime\n" +
 				"Tau\n" +

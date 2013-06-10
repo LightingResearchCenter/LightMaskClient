@@ -73,10 +73,9 @@ public class MatlabODESolver extends PApplet{
 		
 		//Run matlab program from the command line in a new process
 		try {   
-			LightMaskClient.setMainText("PreCalc");
+			LightMaskClient.setMainText("Start calc");
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
-					processed_file[0], CBTminTarget, CBTminInitial, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
-			LightMaskClient.setMainText("PostCalc");
+					processed_file[0], CBTminInitial, CBTminTarget, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
 		} 
 		catch (IOException e) {
 			JOptionPane.showMessageDialog(LightMaskClient.getFrame(), "IO.");
@@ -101,13 +100,20 @@ public class MatlabODESolver extends PApplet{
 			LightMaskClient.setMainText("File not found");
 		}
 		try {
-			/*System.out.println(processed_file[0]+" "+logArray[2]+" "+logArray[7]+" "+logArray[10]+" "+logArray[11]+" "+
+			System.out.println(processed_file[0]+" "+logArray[2]+" "+logArray[9]+" "+logArray[10]+" "+logArray[11]+" "+
 				logArray[3]+" "+logArray[4]+" "+logArray[5]+" "+logArray[6]+ " "+ logArray[12]+ " "+ logArray[13]+ " "+ 
-				logArray[14]+ " "+ logArray[15]+ " "+ logArray[16]+ " "+ logArray[17]+ " "+ logArray[9]+ " "+ logArray[10]);*/
+				logArray[14]+ " "+ logArray[15]+ " "+ logArray[16]+ " "+ logArray[17]+ " "+ logArray[7]+ " "+ logArray[8]);
+			/*for (String s : logArray) {
+				LightMaskClient.appendMainText("\n" + s);
+			}*/
+			
+			//LightMaskClient.setMainText(logArray[2]);
+			
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
-					processed_file[0], logArray[2], logArray[7], logArray[10], "\""+logArray[11]+ "\"", logArray[3], 
-					logArray[4], logArray[5], logArray[6], logArray[12], logArray[13], logArray[14], logArray[15], 
-					logArray[16], logArray[17], logArray[9], logArray[10]).start();
+					processed_file[0], logArray[2], logArray[9], logArray[10], "\"" + logArray[11]+ "\"", logArray[3], 
+					logArray[4], logArray[5], logArray[6], "\"" + logArray[12] + "\"", "\"" + logArray[13] + "\"",
+					"\"" + logArray[14] + "\"", "\"" + logArray[15] + "\"", "\"" + logArray[16] + "\"", 
+					"\"" + logArray[17] + "\"", logArray[7], logArray[8]).start();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			ErrorLog.write(e.getMessage());
@@ -131,41 +137,49 @@ public class MatlabODESolver extends PApplet{
 	        	String line;
 	            int i = -1;
 	            int j = 0;
-	            int count = 0;
 	            BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
+	            
+	            /*Format of the matlab output:
+	             * ans = 
+	             *
+	             * value1
+	             * value2
+	             * etc
+	             * ans = 
+	             * 
+	             * diffvalue1
+	             */
+	            LightMaskClient.setMainText("Start parse");
 	            try {
 	            	//Read the lines from the command window until they're null
-	            	LightMaskClient.appendMainText("Begin");
+	            	//LightMaskClient.appendMainText("Begin");
 	                while ((line = br.readLine()) != null) {
-	                	LightMaskClient.appendMainText("\n" + line);
 	                	//System.out.println(line);
+	                	LightMaskClient.setMainText("Parsing");
+	                	//Only read if the line if it's not empty
 	                	if (line.length() != 0 ){
+	                		//If line conatains ans = move onto the next line
 	                		if(line.contains("ans =")){
 	                			i++;
 	                			j=0;
-	                			LightMaskClient.appendMainText("\nNew ans");
 	                		}
 	                		else{
+	                			//i represents the sets of data delimited by ans =
 		                		switch (i) {
 		                        case 0: ODEresponse1[j] = line;
 		                        		j++;
-		                        		LightMaskClient.appendMainText("\nODE1");
 		                        		break;
 		                        case 1: ODEresponse2[j] = line;
 		                        		j++;
-		                        		LightMaskClient.appendMainText("\nODE2");
 		                        		break;
 		                        case 2: X = line.substring(3);
 		                        		logArray[9] = X;
-		                        		LightMaskClient.appendMainText("\nX");
 		                                break;
 		                        case 3: XC = line.substring(3);
 		                        		logArray[10] = XC;
-		                        		LightMaskClient.appendMainText("\nXC");
 		                                break;
 		                        case 4: endtime = line;
 		                        		logArray[11] = endtime;
-		                        		LightMaskClient.appendMainText("\nEnd time");
 		                        		break;
 		                        default:
 		                        		break;
@@ -173,30 +187,24 @@ public class MatlabODESolver extends PApplet{
 	                		}
 	                	}
 	                }
-	                /*LightMaskClient.setMainText("ODEresponse");
+	                
+	                LightMaskClient.appendMainText("\nCheck");
 	                for (String s : ODEresponse1) {
 	                	LightMaskClient.appendMainText("\n" + s);
 	                }
-
-	                LightMaskClient.appendMainText("\n \n ODEResponse 2");
 	                for (String s : ODEresponse2) {
 	                	LightMaskClient.appendMainText("\n" + s);
 	                }
-	                
-	                LightMaskClient.appendMainText("\n \n Log Array");
-	                for (String s : logArray) {
-	                	LightMaskClient.appendMainText("\n" + s);
-	                }*/
-					boolean test = true;
-					while (test) {}
 
 	                //LightMaskClient.setMainText("PostRead");
-	                //if the calculation completed successfully and returned on/off times
+	                LightMaskClient.setMainText("Start format");
+	                //Writes the values if the dates can be parsed as date objects
 	                if (formatResponse()){
 	                	//LightMaskClient.setMainText("PostFormat");
 		                saveStrings(workingDirectory + "\\data\\Lightmask_last_values.txt", logArray);
 		                DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		                Calendar cal = Calendar.getInstance();
+		                
 		                //append the datalog.txt with new data and update Lightmask_last_values.txt
 		                try {
 		                    PrintWriter log = new PrintWriter(new FileWriter(workingDirectory + "\\data\\datalog.txt", true));
@@ -205,51 +213,51 @@ public class MatlabODESolver extends PApplet{
 		                    for (int k = 0; k < logArray.length && k < nArgs; k++){
 		                    	log.println(labels[k] + ": " + logArray[k]);
 		                    }
+		                    
 		                    log.println("On Times:");
 		                    for (int q = 0; q < 3; q++){
 		                    	log.println(ODEresponse1[q]);
 		                    	logArray[nArgs + q] = ODEresponse1[q];
 		                    }
+		                    
 		                    log.println("Off Times:");
 		                    for (int t = 0; t<3; t++){
 		                    	log.println(ODEresponse2[t]);
 		                    	logArray[nArgs + 3 + t] = ODEresponse2[t];
 		                    }
 		                    log.println("");
+		                    
 		                    log.close();
 		                    saveStrings(workingDirectory + "\\data\\Lightmask_last_values.txt", logArray);
-		                    /*for (String s : logArray) {
-		                    	LightMaskClient.appendMainText("\n" + s);
-		                    }
-							//boolean test = true;
-							while (test) {}*/
+		                    
 		                } catch (IOException e) {
 		                	ErrorLog.write(e.getMessage());
 		                	e.printStackTrace();
 		                }
-		                LightMaskClient.appendMainText("Calculation Complete");
+		                LightMaskClient.appendMainText("\nCalculation Complete");
 		                LightMaskManager maskMan = LightMaskClient.getMaskMan(); 
 		        		maskMan.sendTimes(onTimes, offTimes);
 	                }
-	                //otherwise the calculation ran into an error
+	                
+	                //Otherwise the calculation ran into an error
 	                else{
-	                	LightMaskClient.appendMainText("Calculation error");
+	                	LightMaskClient.appendMainText("\nCalculation error");
 	                	ErrorLog.write("Calculation Error in Parse Response");
 	                }
 	                LightMaskClient.calcStatus(true);
 	                process.destroy();
-	            } catch (IOException e) {
+	            } 
+	            catch (IOException e) {
 	            	ErrorLog.write(e.getMessage());
 	                e.printStackTrace();
 	            }
-	            //LightMaskClient.setMainText("PostParse");
 	            isParseComplete = true;
 	        }
 	    }).start();
 	    
-	    //LightMaskClient.setMainText("Test");
-	    int n = 4;
-	    /*while (!isParseComplete) {
+	    //Creates a 3 dot loop for feedback on calculation time
+	    /*int n = 4;
+	    while (!isParseComplete) {
 	    	if (n >= 3) {
 	    		LightMaskClient.setMainText("Calculating on/off times, please wait");
 	    		n = 0;
@@ -260,36 +268,10 @@ public class MatlabODESolver extends PApplet{
 	    	}
 	    	delay(500);
 	    }*/
-	    
-	    //Redirect stdin
-	    /*new Thread(new Runnable() {
-	        public void run() {
-	            try {
-	                byte[] buffer = new byte[1024];
-	
-	                int bytesRead;
-	                while ((bytesRead = System.in.read(buffer)) != -1) {
-	                    for(int i = 0; i < buffer.length; i++) {
-	                        int intValue = new Byte(buffer[i]).intValue();
-	                        if (intValue == 0) {
-	                            bytesRead = i;
-	                            break;
-	                        }
-	                    }
-	                    // for some reason there are 2 extra bytes on the end
-	                    stdin.write(buffer, 0, bytesRead-2);
-	                    System.out.println("[IN] " + new String(buffer, 0, bytesRead-2) + " [/IN]");
-	                }
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }).start();
-	    */
 	    //process.destroy();
 	}
 	
-	//convert time to Calendar object
+	//Convert times to Calendar object
 	public boolean formatResponse(){
 		boolean response = false;
 		for (int i =0; i < 6; i++){
@@ -305,6 +287,7 @@ public class MatlabODESolver extends PApplet{
 		return response;
 	}
 	
+	//Parse the date and time strings a calendar
 	private Calendar convertResponse(String formattedDate){
 		int year = Integer.parseInt(formattedDate.substring(7, 11));	
 		int month = convertMonth(formattedDate.substring(3, 7));
@@ -316,6 +299,7 @@ public class MatlabODESolver extends PApplet{
 		return cal;
 	}
 	
+	//Parse the 3 letter month string as a calendar object
 	private int convertMonth(String month) {
 		Date date;
 		try {
