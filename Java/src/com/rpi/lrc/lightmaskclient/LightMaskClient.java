@@ -210,6 +210,12 @@ public class LightMaskClient extends PApplet {
 		else if (key == 'S') {
 			ddm.researchTools.hide();
 		}
+		else if (key == 'I') {
+			String workingDirectory = new String(System.getProperty("user.dir")+ "\\src\\");
+			String s[] = loadStrings(workingDirectory + "data\\initial_run_flag.txt");
+			s[0] = "true";
+			saveStrings(workingDirectory + "data\\initial_run_flag.txt", s);
+		}
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////Initialization
