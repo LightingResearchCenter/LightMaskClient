@@ -64,11 +64,11 @@ ms2d = 86400000; %millisecond to day conversion.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Read Daysimeter data from file
-[dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
+[dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
 %CS = ones(size(CS))*0.4;
 %CS(end-1000:end-500) = 0.001;
-%[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
-Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
+[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
+%Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
 
 % crop Daysimeter data to begin at or after time0
 index = find(Time>=time0,1,'first');
