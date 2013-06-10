@@ -1,4 +1,4 @@
-function [onTimes , offTimes, finalX, finalXC, endTime, MaxLightDuration] = LEAP_CBTmin_rk4_NoPlot31May2013Tester(DaysimeterDataFile,CBTminTarget,CBTminInitial,AvailStartTime,AvailEndTime,tau,maskLightLevel, MaxLightDuration, maskColor)
+function [onTimes , offTimes, finalX, finalXC, endTime, MaxLightDuration] = LEAP_CBTmin_rk4_NoPlot31May2013Tester(DaysimeterDataFile,CBTminInitial,CBTminTarget,AvailStartTime,AvailEndTime,tau,maskLightLevel, MaxLightDuration, maskColor)
 % Input arguements
 % DaysimeterDataFile: file name of calibrated Daysimeter data [dateStr,timeStr,Lux,CLA,CS,Activity]
 % CBTminTarget: target CBTmin time in hours (0 <= CBTminTarget < 24)
@@ -41,17 +41,17 @@ numOfDaysLEAP = 3;
 increment = 0.25; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
 javaOffset = 719529; %Offset from matlab datstr start to java epoch
-ms2d = 86400000;
+ms2d = 86400000; %millisecond to day conversion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Read Daysimeter data from file
-[dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
+[dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
 
-[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
-%Time = JT/ms2d + javaOffset;
+%[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
+Time = JT/ms2d + javaOffset; %converts java time to matlab time.
 
 % M = load(pathFileName);
 % Time = M(:,1)';

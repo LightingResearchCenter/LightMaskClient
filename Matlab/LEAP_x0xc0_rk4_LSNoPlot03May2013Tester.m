@@ -56,16 +56,19 @@ offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 0.25; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
+javaOffset = 719529; %Offset from matlab datstr start to java epoch
+ms2d = 86400000; %millisecond to day conversion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Read Daysimeter data from file
-[dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
+[dateStr,timeStr,~,~,CS,~,JT] = textread(pathFileName,'%s%s%f%f%f%f%f','headerlines',1);
 %CS = ones(size(CS))*0.4;
 %CS(end-1000:end-500) = 0.001;
-[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
+%[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
+Time = JT/ms2d + javaOffset; %converts java time to matlab time.
 
 % crop Daysimeter data to begin at or after time0
 index = find(Time>=time0,1,'first');
