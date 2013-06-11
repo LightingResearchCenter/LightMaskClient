@@ -40,14 +40,16 @@ public class MatlabODESolver extends PApplet{
 	String workingDirectory;
 	String[] processed_file;
 	File tempDir;
+	LightMaskClient parent;
 	boolean isParseComplete = false;
 	String[] labels = {"Subject ID", "CBTmin", "CBTminTarget", "availStartTime", "availEndTime", "Tau", "maskLightLevel (CS)", "maxDur", "Mask Color", "X", "XC0", "time0"};
 	
-	public MatlabODESolver(){
+	public MatlabODESolver(LightMaskClient client){
+		parent = client;
 		calc_complete = false;
 		maskManager = new LightMaskManager();  
 	    log = new Vector(6, 6);
-	    workingDirectory = new String(System.getProperty("user.dir")+ "\\src\\");  
+	    workingDirectory = new String(System.getProperty("user.dir") + "\\src\\");  
 	    tempDir = new File(workingDirectory);  
 	}
 	
@@ -129,7 +131,7 @@ public class MatlabODESolver extends PApplet{
 	    
 	    //LightMaskClient.setMainText("PreParse");
 		//Create new thread to redirect stdout
-	    new Thread(new Runnable() {
+	    Thread t = new Thread() {
 	        public void run() {
 	        	ODEresponse1 = new String[7];
 	    	    ODEresponse2 = new String[7];
@@ -184,7 +186,6 @@ public class MatlabODESolver extends PApplet{
 	                }
 
 
-	                LightMaskClient.setMainText("Start format");
 	                //Writes the values if the dates can be parsed as date objects
 	                if (formatResponse()){
 	                	//LightMaskClient.setMainText("PostFormat");
@@ -239,7 +240,9 @@ public class MatlabODESolver extends PApplet{
 	            }
 	            isParseComplete = true;
 	        }
-	    }).start();
+	        
+	    };  
+	    t.start();
 	    
 	    //Creates a 3 dot loop for feedback on calculation time
 	    int n = 4;
@@ -254,8 +257,12 @@ public class MatlabODESolver extends PApplet{
 	    	}
 	    	delay(500);
 	    }
-	    //process.destroy();
+	    while (nIncrement < 3) {}
+	    delay (200);
+	    parent.checkSchedule();
+	    nIncrement = 0;
 	}
+	
 	
 	//Convert times to Calendar object
 	public boolean formatResponse(){
@@ -273,6 +280,7 @@ public class MatlabODESolver extends PApplet{
 		return response;
 	}
 	
+	
 	//Parse the date and time strings a calendar
 	private Calendar convertResponse(String formattedDate){
 		int year = Integer.parseInt(formattedDate.substring(7, 11));	
@@ -284,6 +292,7 @@ public class MatlabODESolver extends PApplet{
 		Calendar cal = new GregorianCalendar(year, month, day, hour, minute, second);
 		return cal;
 	}
+	
 	
 	//Parse the 3 letter month string as a calendar object
 	private int convertMonth(String month) {
@@ -300,4 +309,12 @@ public class MatlabODESolver extends PApplet{
 		}
 	    return 0;
 	}
+	
+	
+	private static int nIncrement;
+	public static void waitIncrement () {
+		nIncrement++;
+	}
 }
+
+
