@@ -48,7 +48,7 @@ public class DaysimDownload extends PApplet{
 		CS = new float[16256];
 		endaddress = 16255;
 		timestamps = new String[16256];
-		matTime = new long[16256];
+		//matTime = new long[16256];
 
 		//for calibration
 		smac = new float[3];
@@ -175,7 +175,7 @@ public class DaysimDownload extends PApplet{
 			String[] processed = new String[endaddress + 1];
 			processed[0] = "Time\tLux\tCLA\tCS\tActivity";
 			for(int i = 0; i < endaddress; i++) {
-				processed[i + 1] = timestamps[i] + "\t" +  str(lux[i]) + "\t" + str(CLA[i]) + "\t" + str(CS[i]) + "\t" + str(a[i]) + "\t" + matTime[i];
+				processed[i + 1] = timestamps[i] + "\t" +  str(lux[i]) + "\t" + str(CLA[i]) + "\t" + str(CS[i]) + "\t" + str(a[i]);
 			}
 			//save processed file
 			String[] processedPath = new String[1];
@@ -413,7 +413,7 @@ public class DaysimDownload extends PApplet{
   			}
   			
   			//LightMaskClient.appendMainText("\nGettings time");
-  			matTime[i] = calendar.getTimeInMillis();
+  			//matTime[i] = calendar.getTimeInMillis();
   			//LightMaskClient.appendMainText("\nGot time" + matTime[i]);
   
   			//timestamps[i] = tempstr[3] + ":" + tempstr[4] + ":" + tempstr[5] + " " + tempstr[1] + "/" + tempstr[2] + "/" + tempstr[0];

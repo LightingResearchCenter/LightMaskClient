@@ -74,9 +74,10 @@ public class InitialRun extends PApplet {
 		initValues[6] = maxDur = txt[6].getText();
 		
 		initValues[8] = "===============Only use numbers above this line\n" +
-				"Formate of this file is in order:\n" +
+				"Format of this file is in order:\n" +
 				"Subject ID\n" +
 				"CBTmin\n" +
+				"CBTmin target\n" +
 				"availStartTime\n" +
 				"availEndTime\n" +
 				"Tau\n" +
@@ -108,16 +109,6 @@ public class InitialRun extends PApplet {
 
 	void Cancel(int theValue) {
 		fr.dispose();
-	}
-
-	public void controlEvent(ControlEvent theEvent) {
-		if(theEvent.isAssignableFrom(Textfield.class)) {
-			Textfield t = (Textfield)theEvent.getController();
-			println("Working");
-			if (!isFloat(theEvent.getStringValue())) {
-
-			}
-		}
 	}
 
 	public static boolean isFloat(String s) {

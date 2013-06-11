@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment-project plugin="plugin.deploytool" plugin-version="1.0">
-  <configuration target="target.standalone" target-name="Console Application" name="x0xc0" location="C:\Users\pentla\Documents\GitHub\LightmaskMatlabCode" file="C:\Users\pentla\Documents\GitHub\LightmaskMatlabCode\x0xc0.prj" build-checksum="501505305">
-    <param.project.name>C:\Users\pentla\Documents\GitHub\LightmaskMatlabCode\x0xc0.prj</param.project.name>
+  <configuration target="target.standalone" target-name="Console Application" name="x0xc0" location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab" file="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\x0xc0.prj" preferred-package-type="package.type.exe" build-checksum="2373092117" preferred-package-location="C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\x0xc0\distrib">
+    <param.project.name>C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\x0xc0.prj</param.project.name>
     <param.target.type>Console Application</param.target.type>
     <param.appname>x0xc0</param.appname>
     <param.intermediate>${PROJECT_ROOT}\x0xc0\src</param.intermediate>
@@ -58,23 +58,26 @@
       <param.user.defined.mcr.options />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\LEAP_x0xc0_rk4_LSNoPlot03May2013.m</file>
+      <file>${PROJECT_ROOT}\LEAP_x0xc0_rk4_LSNoPlot03May2013Tester.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>${PROJECT_ROOT}\PrescriptionLoopTester3.m</file>
+      <file>${PROJECT_ROOT}\PrintOnOffArrays.m</file>
+      <file>${PROJECT_ROOT}\ReadDaysimDataFromFile.m</file>
+      <file>${PROJECT_ROOT}\ReSampleCS.m</file>
       <file>${PROJECT_ROOT}\rk4P.m</file>
       <file>${PROJECT_ROOT}\rk4stepperP.m</file>
       <file>${PROJECT_ROOT}\xprime.m</file>
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file name="readme.txt" location="${PROJECT_ROOT}\x0xc0\distrib" optional="true">C:\Users\pentla\Documents\GitHub\LightmaskMatlabCode\x0xc0\distrib\readme.txt</file>
-      <file name="x0xc0.exe" location="${PROJECT_ROOT}\x0xc0\distrib" optional="false">C:\Users\pentla\Documents\GitHub\LightmaskMatlabCode\x0xc0\distrib\x0xc0.exe</file>
+      <file name="x0xc0.exe" location="${PROJECT_ROOT}\x0xc0\distrib" optional="false">C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\x0xc0\distrib\x0xc0.exe</file>
+      <file name="readme.txt" location="${PROJECT_ROOT}\x0xc0\distrib" optional="true">C:\Users\pentla\Documents\GitHub\LightMaskClient\Matlab\x0xc0\distrib\readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
       <root>C:\Program Files\MATLAB\R2012a</root>
       <path>
-        <directory>C:\Users\pentla\Documents\GitHub\CaseWestern</directory>
         <directory>C:\Users\pentla\Documents\MATLAB</directory>
         <directory>\\root\Public\malhor\Matlab Files\Lemur Study</directory>
         <directory>\\root\Public\lanchj\DayHourAverages</directory>

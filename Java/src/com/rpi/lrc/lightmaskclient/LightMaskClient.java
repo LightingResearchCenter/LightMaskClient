@@ -64,7 +64,7 @@ public class LightMaskClient extends PApplet {
 
 	//Configure window and text
 	public void setup() {
-		//checkIfRunning();					//Checks if there is another instance of the program running
+		checkIfRunning();					//Checks if there is another instance of the program running
 		
 		size(400, 500);						//Sets the size of the main window
 		f28 = loadFont("Calibri-28.vlw"); 	//Loads the fonts 
@@ -127,7 +127,7 @@ public class LightMaskClient extends PApplet {
 					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
 					
 					//If this is the initial calculation use CBTmin file
-					if (firstRun[0].toLowerCase().contains("true") || firstRun[0].toLowerCase().contains("false")){
+					if (firstRun[0].toLowerCase().contains("true")){
 						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");	//Gets initial values from file
 						appendMainText("\nInitial Run");
 						odesolver.calculateInitial(values[1], values[2], values[3], values[4],		//Calculates the values for the next run
@@ -135,10 +135,12 @@ public class LightMaskClient extends PApplet {
 						
 						firstRun[0] = "false";										
 						saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
+						checkSchedule();
 					}
 					//else use x0xc0 file
 					else{
 						odesolver.calculate();
+						checkSchedule();
 					}
 					daysPathSet = false;
 				}
@@ -210,6 +212,12 @@ public class LightMaskClient extends PApplet {
 		else if (key == 'S') {
 			ddm.researchTools.hide();
 		}
+		else if (key == 'I') {
+			String workingDirectory = new String(System.getProperty("user.dir")+ "\\src\\");
+			String s[] = loadStrings(workingDirectory + "data\\initial_run_flag.txt");
+			s[0] = "true";
+			saveStrings(workingDirectory + "data\\initial_run_flag.txt", s);
+		}
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////Initialization
@@ -238,6 +246,7 @@ public class LightMaskClient extends PApplet {
 		taMain.setFont(new Font("Calibri", Font.PLAIN, 18));
 		taMain.setBackground(Color.darkGray);
 		taMain.setForeground(Color.white);
+		taMain.setEditable(false);
 		
 		//Creates the main panel and add the text area to it
 		mainPanel = new Panel();  
@@ -260,7 +269,7 @@ public class LightMaskClient extends PApplet {
 	//Creates the pulse settings dialog in a new window (frame)
 	void showPulseSettingsDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
-		  PulseSettings p = new PulseSettings(this, f, 175, 200);
+		  PulseSettings p = new PulseSettings(this, f, 175, 220);
 		  f.add(p);
 		  p.init();
 		  
@@ -431,6 +440,14 @@ public class LightMaskClient extends PApplet {
 		
 		//Set the pulse repetition period
 		maskManager.sendCommand("pulseRep:" + pulseRep + "!");
+	}
+	
+	public void testPulseSettings(String pulseInt, String pulseDur) {
+		maskManager.sendCommand("calFlash:" + pulseInt + "," + pulseDur + "!");
+		try {
+			wait(Long.parseLong(pulseDur));
+		}
+		catch (Exception e) {}
 	}
 	
 	public static LightMaskManager getMaskMan(){
