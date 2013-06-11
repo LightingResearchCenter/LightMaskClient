@@ -2,7 +2,7 @@ function [ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increme
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
-numIterations = numOfDaysLEAP*24/increment;
+numIterations = round(numOfDaysLEAP*24/increment);
 CS = zeros(numIterations,1);
 currLight = 0; %Used for keeping track of how much light the subject has received each night.
 
@@ -19,7 +19,7 @@ currLight = 0; %Used for keeping track of how much light the subject has receive
 %pLoopTimeTotal = zeros(numIterations,1); % Only for plotting
 
 for i1 = 1:numIterations  
-    [pX1 pXC1,tend,xarray,xcarray,t] = rk4stepperP(pX,pXC,maskLightLevel,tau,t1,t2,nsteps);
+    
     [pX2 pXC2,tend,xarray,xcarray,t] = rk4stepperP(pX,pXC,offLightLevel,tau,t1,t2,nsteps);
     %L and P process functions
     %[pX1 pXC1] = LP(t1, t2, pX, pXC, n0, maskLightLevel, G, alpha0, beta, tau); %L/P Process Function for CS = 0.4
@@ -34,12 +34,6 @@ for i1 = 1:numIterations
     
     %Absolute Loop Time (real time)
     %AbsLoopTimeTotal = pLoopTimeTotal/24 + floor(Time(1)); % Only for plotting
-  
-  % CALCULATIONS TO SEE IF ADDING LIGHT BRINGS THE CYCLE CLOSER TO THE CBTmin
-    withLight = ((pX1 - xTarget)^2) + ((pXC1 - xcTarget)^2);
-    withoutLight = ((pX2 - xTarget)^2) + ((pXC2 - xcTarget)^2);
-    %If adding Light Brings the Cycle Closer to the CBTmin, then Add Light. Else Add no Light
-    %Update all Arrays and Initial Conditions
     
     ToD = mod(t1,24); %Time of Day
    
@@ -56,11 +50,22 @@ for i1 = 1:numIterations
         Available = 0; %This will only occour if the ActStartTime is too close to the CBTmin
         %Available = ((ToD >= ActStartTime || ToD < ActEndTime));
     else 
-        Available = (timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime) && (currLight < MaxLightDuration)); %Available if ActStartTime <= ToD < ActEndTime and the max dosage for the night has not been reached.
+        Available = (timeAdj(ToD)+.0001 >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime) && (currLight < MaxLightDuration)); %Available if ActStartTime <= ToD < ActEndTime and the max dosage for the night has not been reached.
     end
- 
-%%%%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%%%    
-%     if (Available == 1) %For Testing purposes
+    
+    if (Available == 1)
+        [pX1 pXC1,tend,xarray,xcarray,t] = rk4stepperP(pX,pXC,maskLightLevel,tau,t1,t2,nsteps);
+
+        % CALCULATIONS TO SEE IF ADDING LIGHT BRINGS THE CYCLE CLOSER TO THE CBTmin
+        withLight = ((pX1 - xTarget)^2) + ((pXC1 - xcTarget)^2);
+        withoutLight = ((pX2 - xTarget)^2) + ((pXC2 - xcTarget)^2);
+        %If adding Light Brings the Cycle Closer to the CBTmin, then Add Light. Else Add no Light
+        %Update all Arrays and Initial Conditions
+    
+%%%%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%%%%    
+%     if (t1 >= 94 && t1 < 95) %For Testing purposes
+%         t1
+%         Available 
 %         currTime = datestr(t1/24 + absTimeOffset)
 %         ToD = ToD
 %         currLight = currLight
@@ -69,21 +74,29 @@ for i1 = 1:numIterations
 %         ActEndTime = ActEndTime
 %     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        if ((withLight < withoutLight) && (Available == 1))
+            CS(i1) = maskLightLevel;
+            %xTotal(i1) = pX1; % Only for plotting
+            %xcTotal(i1) = pXC1; % Only for plotting
+            pX = pX1;
+            pXC = pXC1;
+            currLight = currLight + increment;
+        else
+            CS(i1) = offLightLevel;
+            %xTotal(i1) = pX2; % Only for plotting
+            %xcTotal(i1) = pXC2; % Only for plotting
+            pX = pX2;
+            pXC = pXC2;
+        end
     
-    if ((withLight < withoutLight) && (Available == 1))
-        CS(i1) = maskLightLevel;
-        %xTotal(i1) = pX1; % Only for plotting
-        %xcTotal(i1) = pXC1; % Only for plotting
-        pX = pX1;
-        pXC = pXC1;
-        currLight = currLight + increment;
     else
         CS(i1) = offLightLevel;
         %xTotal(i1) = pX2; % Only for plotting
         %xcTotal(i1) = pXC2; % Only for plotting
         pX = pX2;
         pXC = pXC2;
-    end     
+    end
     
     % ARRAYS FOR THE LIGHT ON AND OFF TIMES
     if (CS(i1) == maskLightLevel && i1==1)
@@ -101,7 +114,7 @@ for i1 = 1:numIterations
     end
 
 %%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%
-%     if (Available == 1) %For testing
+%     if (t1 >= 94 && t1 < 95) %For testing
 %         currCS = CS(i1)
 %     end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

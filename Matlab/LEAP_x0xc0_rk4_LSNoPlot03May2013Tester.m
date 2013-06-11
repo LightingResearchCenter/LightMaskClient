@@ -54,7 +54,7 @@ offTime2 = datenum(offTime2,'dd-mmm-yyyy HH:MM');
 %maskLightLevel = 0.6; % Max Light Level (CS units)
 offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
-increment = 0.25; % Hours 
+increment = 1/12; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
 javaOffset = 719529; %Offset from matlab datstr start to java epoch
 ms2d = 86400000; %millisecond to day conversion.
@@ -67,7 +67,7 @@ ms2d = 86400000; %millisecond to day conversion.
 [dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
 %CS = ones(size(CS))*0.4;
 %CS(end-1000:end-500) = 0.001;
-[ Time ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
+[ Time, inc ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
 %Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
 
 % crop Daysimeter data to begin at or after time0
@@ -87,7 +87,7 @@ if (initialStartTime >=24)
 else
     absTimeOffset = floor(time0);
 end
-sRate = 1/(24*(Time(2)-Time(1))); % sample rate, 1/hours
+sRate = 1/inc; % sample rate, 1/hours
 %csTimeRelHours = (Time - floor(Time(1)))*24;
 csTimeRelHours = (Time - floor(time0))*24;
 
