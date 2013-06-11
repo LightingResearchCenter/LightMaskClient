@@ -111,16 +111,6 @@ public class InitialRun extends PApplet {
 		fr.dispose();
 	}
 
-	public void controlEvent(ControlEvent theEvent) {
-		if(theEvent.isAssignableFrom(Textfield.class)) {
-			Textfield t = (Textfield)theEvent.getController();
-			println("Working");
-			if (!isFloat(theEvent.getStringValue())) {
-
-			}
-		}
-	}
-
 	public static boolean isFloat(String s) {
 		try { 
 			Float.parseFloat(s); 

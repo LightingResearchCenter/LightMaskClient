@@ -73,7 +73,6 @@ public class MatlabODESolver extends PApplet{
 		
 		//Run matlab program from the command line in a new process
 		try {   
-			LightMaskClient.setMainText("Start calc");
 			process = new ProcessBuilder("cmd", "/c", matlabconsole, 
 					processed_file[0], CBTminInitial, CBTminTarget, starttime, endtime, tau, lightlevel, maxDur, maskColor).start();
 		} 
@@ -149,13 +148,9 @@ public class MatlabODESolver extends PApplet{
 	             * 
 	             * diffvalue1
 	             */
-	            LightMaskClient.setMainText("Start parse");
 	            try {
 	            	//Read the lines from the command window until they're null
-	            	//LightMaskClient.appendMainText("Begin");
 	                while ((line = br.readLine()) != null) {
-	                	//System.out.println(line);
-	                	LightMaskClient.setMainText("Parsing");
 	                	//Only read if the line if it's not empty
 	                	if (line.length() != 0 ){
 	                		//If line conatains ans = move onto the next line
@@ -187,16 +182,8 @@ public class MatlabODESolver extends PApplet{
 	                		}
 	                	}
 	                }
-	                
-	                LightMaskClient.appendMainText("\nCheck");
-	                for (String s : ODEresponse1) {
-	                	LightMaskClient.appendMainText("\n" + s);
-	                }
-	                for (String s : ODEresponse2) {
-	                	LightMaskClient.appendMainText("\n" + s);
-	                }
 
-	                //LightMaskClient.setMainText("PostRead");
+
 	                LightMaskClient.setMainText("Start format");
 	                //Writes the values if the dates can be parsed as date objects
 	                if (formatResponse()){
@@ -234,7 +221,6 @@ public class MatlabODESolver extends PApplet{
 		                	ErrorLog.write(e.getMessage());
 		                	e.printStackTrace();
 		                }
-		                LightMaskClient.appendMainText("\nCalculation Complete");
 		                LightMaskManager maskMan = LightMaskClient.getMaskMan(); 
 		        		maskMan.sendTimes(onTimes, offTimes);
 	                }
@@ -256,7 +242,7 @@ public class MatlabODESolver extends PApplet{
 	    }).start();
 	    
 	    //Creates a 3 dot loop for feedback on calculation time
-	    /*int n = 4;
+	    int n = 4;
 	    while (!isParseComplete) {
 	    	if (n >= 3) {
 	    		LightMaskClient.setMainText("Calculating on/off times, please wait");
@@ -267,7 +253,7 @@ public class MatlabODESolver extends PApplet{
 	    		n++;
 	    	}
 	    	delay(500);
-	    }*/
+	    }
 	    //process.destroy();
 	}
 	
