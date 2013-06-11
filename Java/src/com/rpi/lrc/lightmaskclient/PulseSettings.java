@@ -28,15 +28,17 @@ public class PulseSettings extends PApplet {
 	    		.setPosition(10, 40 * i + 10);
 	    }
 	    
+	    cp5.addButton("ledCheck")
+	    	.setPosition(10, 130);
 	    cp5.addButton("Submit")
-	    	.setPosition(10, 140);
+	    	.setPosition(10, 160);
 	    cp5.addButton("Cancel")
-    		.setPosition(90, 140);
+    		.setPosition(90, 160);
 	  }
 
 	  public void draw() {
 	      background(100);
-	      CheckValidValues();
+	      checkValidValues();
 	  }
 	  
 	  public PulseSettings(LightMaskClient theParent, Frame f, int theWidth, int theHeight) {
@@ -52,6 +54,13 @@ public class PulseSettings extends PApplet {
 	    return cp5;
 	  }
 	  
+	  void ledCheck (int theValue) {
+		  if (checkValidValues()) {
+			  String tempInt = txt[1].getText();
+			  String tempDur = txt[0].getText();
+			  parent.testPulseSettings(tempInt, tempDur);
+		  }
+	  }
 	  
 	  ControlP5 cp5;
 
@@ -63,7 +72,7 @@ public class PulseSettings extends PApplet {
 			  pulseInt = txt[1].getText();
 			  pulseRep = txt[2].getText();
 			  
-			  if (!CheckValidValues()) {
+			  if (!checkValidValues()) {
 				  return;
 			  }
 			  
@@ -92,7 +101,7 @@ public class PulseSettings extends PApplet {
 		    return true;
 		}
 	  
-	  boolean CheckValidValues () {
+	  boolean checkValidValues () {
 			boolean valid = true;
 			for (int i  = 0; i < 3; i++) {
 				valid &= isValidValue(txt[i], 0, 9999);

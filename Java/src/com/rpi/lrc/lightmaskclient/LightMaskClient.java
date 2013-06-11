@@ -135,10 +135,12 @@ public class LightMaskClient extends PApplet {
 						
 						firstRun[0] = "false";										
 						saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
+						checkSchedule();
 					}
 					//else use x0xc0 file
 					else{
 						odesolver.calculate();
+						checkSchedule();
 					}
 					daysPathSet = false;
 				}
@@ -244,6 +246,7 @@ public class LightMaskClient extends PApplet {
 		taMain.setFont(new Font("Calibri", Font.PLAIN, 18));
 		taMain.setBackground(Color.darkGray);
 		taMain.setForeground(Color.white);
+		taMain.setEditable(false);
 		
 		//Creates the main panel and add the text area to it
 		mainPanel = new Panel();  
@@ -266,7 +269,7 @@ public class LightMaskClient extends PApplet {
 	//Creates the pulse settings dialog in a new window (frame)
 	void showPulseSettingsDialog() {
 		  Frame f = new Frame("Light Pulse Settings");
-		  PulseSettings p = new PulseSettings(this, f, 175, 200);
+		  PulseSettings p = new PulseSettings(this, f, 175, 220);
 		  f.add(p);
 		  p.init();
 		  
@@ -437,6 +440,14 @@ public class LightMaskClient extends PApplet {
 		
 		//Set the pulse repetition period
 		maskManager.sendCommand("pulseRep:" + pulseRep + "!");
+	}
+	
+	public void testPulseSettings(String pulseInt, String pulseDur) {
+		maskManager.sendCommand("calFlash:" + pulseInt + "," + pulseDur + "!");
+		try {
+			wait(Long.parseLong(pulseDur));
+		}
+		catch (Exception e) {}
 	}
 	
 	public static LightMaskManager getMaskMan(){
