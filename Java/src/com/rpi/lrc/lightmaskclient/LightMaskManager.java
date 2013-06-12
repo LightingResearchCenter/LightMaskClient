@@ -140,7 +140,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 				}
 			}
 		}
-			
+		//LightMaskClient.checkSchedule();	
 	}
 	
 	//parses on and off time responses from the MSP430
@@ -153,6 +153,9 @@ public class LightMaskManager implements DataReceivedActionListener {
 			else if (s.contains("Off time")){
 				int index = Integer.parseInt(s.substring(11, 12));
 				lightOffTimes[index] = s.substring(14);
+			}
+			else if (s.contains("offTime")) {
+				MatlabODESolver.waitIncrement();
 			}
 			else {
 				LightMaskClient.appendMainText(s);

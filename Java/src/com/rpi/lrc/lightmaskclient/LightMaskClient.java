@@ -75,7 +75,7 @@ public class LightMaskClient extends PApplet {
 		LightMaskStatus = new StatusBar(this, "LightMask", 215, 184);	//Creates a status bar for the LightMask
 		download = new DaysimDownload(this);							//Sets up the download for the daysimeter data
 		maskManager = new LightMaskManager();							//Creates a LightMask Manager
-		odesolver = new MatlabODESolver();								//Initializes the MatlabODE solver
+		odesolver = new MatlabODESolver(this);								//Initializes the MatlabODE solver
 		ddm = new DropdownMenu(this);									//Creates the dropdown menu
 		
 		initTextArea();		//Creates the text area
@@ -135,12 +135,10 @@ public class LightMaskClient extends PApplet {
 						
 						firstRun[0] = "false";										
 						saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
-						checkSchedule();
 					}
 					//else use x0xc0 file
 					else{
 						odesolver.calculate();
-						checkSchedule();
 					}
 					daysPathSet = false;
 				}
