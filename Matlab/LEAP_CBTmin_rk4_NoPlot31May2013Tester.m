@@ -27,21 +27,19 @@ CBTminInitial = 2.5;
 %pathFileName = [dataPath dataFileName];
 pathFileName = DaysimeterDataFile;
 
-CBTminTarget = str2num(CBTminTarget);
-CBTminInitial = str2num(CBTminInitial);
-AvailStartTime = str2num(AvailStartTime);
-AvailEndTime = str2num(AvailEndTime);
-tau = str2num(tau);
-maskLightLevel = str2num(maskLightLevel);
-MaxLightDuration = str2num(MaxLightDuration);
+CBTminTarget = str2double(CBTminTarget);
+CBTminInitial = str2double(CBTminInitial);
+AvailStartTime = str2double(AvailStartTime);
+AvailEndTime = str2double(AvailEndTime);
+tau = str2double(tau);
+maskLightLevel = str2double(maskLightLevel);
+MaxLightDuration = str2double(MaxLightDuration);
 
 % Constants/Initial Conditions
 offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 1/12; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
-javaOffset = 719529; %Offset from matlab datstr start to java epoch
-ms2d = 86400000; %millisecond to day conversion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +49,6 @@ ms2d = 86400000; %millisecond to day conversion.
 [dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
 
 [ Time, inc ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
-%Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time. The 5/24 converts from UTC to EST, a different conversion will be needed for testing in different time zones.
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
 initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours

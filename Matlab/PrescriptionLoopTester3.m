@@ -35,7 +35,7 @@ for i1 = 1:numIterations
     %Absolute Loop Time (real time)
     %AbsLoopTimeTotal = pLoopTimeTotal/24 + floor(Time(1)); % Only for plotting
     
-    ToD = mod(t1,24); %Time of Day
+    ToD = round(mod(t1,24)*10000)/10000; %Time of Day rounded to 4 decimal places back
    
     CBTmin = XXC2CBTmin((t1/24 + absTimeOffset), pX, pXC);
     ActEndTime = mod(CBTmin - 1, 24); %The treatment will end 1 hour prior to CBTmin
@@ -50,7 +50,7 @@ for i1 = 1:numIterations
         Available = 0; %This will only occour if the ActStartTime is too close to the CBTmin
         %Available = ((ToD >= ActStartTime || ToD < ActEndTime));
     else 
-        Available = (timeAdj(ToD)+.0001 >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime) && (currLight < MaxLightDuration)); %Available if ActStartTime <= ToD < ActEndTime and the max dosage for the night has not been reached.
+        Available = (timeAdj(ToD) >= timeAdj(ActStartTime) && timeAdj(ToD) < timeAdj(ActEndTime) && (round(currLight*10000)/10000 < MaxLightDuration)); %Available if ActStartTime <= ToD < ActEndTime and the max dosage for the night has not been reached.
     end
     
     if (Available == 1)
@@ -63,11 +63,13 @@ for i1 = 1:numIterations
         %Update all Arrays and Initial Conditions
     
 %%%%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%%%%    
-%     if (t1 >= 94 && t1 < 95) %For Testing purposes
+%     if (t1 >= 93.99 && t1 < 94.2) %For Testing purposes
 %         t1
 %         Available 
 %         currTime = datestr(t1/24 + absTimeOffset)
-%         ToD = ToD
+%         format long
+%         aToD = timeAdj(ToD)
+%         aActStartTime = timeAdj(ActStartTime)
 %         currLight = currLight
 %         CBTmin = CBTmin
 %         ActStartTime = ActStartTime
