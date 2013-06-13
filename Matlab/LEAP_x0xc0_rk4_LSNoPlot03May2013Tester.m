@@ -77,6 +77,10 @@ CS = CS(index:end);
 initialStartTime = (time0 - floor(time0))*24; % Previous end of Daysimeter data, relative time in hours;
 initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
 
+if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
+    initialStartTime = initialStartTime + increment;
+end
+
 if (initialStartTime >=24) 
     initialStartTime = initialStartTime - 24;
     %absTimeOffset = floor(Time(1)) +1;
