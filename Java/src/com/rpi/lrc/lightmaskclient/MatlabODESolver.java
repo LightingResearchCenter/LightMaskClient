@@ -128,6 +128,7 @@ public class MatlabODESolver extends PApplet{
 		
 		stdin = process.getOutputStream();
 	    stdout = process.getInputStream();
+	    isParseComplete = false;
 	    
 	    //LightMaskClient.setMainText("PreParse");
 		//Create new thread to redirect stdout
@@ -227,8 +228,16 @@ public class MatlabODESolver extends PApplet{
 	                }
 	                
 	                //Otherwise the calculation ran into an error
-	                else{
-	                	LightMaskClient.appendMainText("\nCalculation error");
+	                else {
+	                	String responseLog = "On times:\n";
+	                	for (String s : ODEresponse1) {
+	                		responseLog += s + "\n";
+	                	}
+	                	for (String s : ODEresponse2) {
+	                		responseLog += s + "\n";
+	                	}
+	                	
+	                	LightMaskClient.appendMainText("\nCalculation error\n" + responseLog);
 	                	ErrorLog.write("Calculation Error in Parse Response");
 	                }
 	                LightMaskClient.calcStatus(true);
