@@ -51,19 +51,25 @@ nsteps = 30; % number of steps used for ODE solver for each time increment
 [ Time, inc ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
-initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
-initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
+initialStartTime0 = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
+initialStartTime = round(initialStartTime0/increment)*increment; % rounded to nearest simulation increment
+
+if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
+    initialStartTime = initialStartTime + increment;
+end
+
 if (initialStartTime >=24)
     initialStartTime = initialStartTime - 24;
     absTimeOffset = floor(Time(1)) +1;
 else
     absTimeOffset = floor(Time(1));
 end
-sRate = 1/inc ; % sample rate, 1/hours
+sRate = 1/inc;  % sample rate, 1/hours
 csTimeRelHours = (Time - floor(Time(1)))*24;
 
 % Resample CS: average value of CS during increment centered on increments
 [ CSavg, timeCSavg ] = ReSampleCS( initialStartTime, increment, csTimeRelHours, sRate, CS, Time );
+
 
 %Plot of CS and CSavg
 %figure(1)
@@ -89,15 +95,6 @@ dXC = XC0; %daysimeter XC starts at initial XC given
 finalX = dX;
 finalXC = dXC;
 endTime = t2/24 + absTimeOffset;
-
-%Plot Of x and xc values based on daysimeter CSavg values
-%timePlot = timePlot/24 + floor(Time(1)); % absolute time
-%figure(2)
-%plot(timePlot,dXplot,'g.-')
-%hold on
-%plot(timePlot,Xclock,'b.-')
-%plot(timeCSavg,CSavg,'g-')
-%hold off
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% START PRESCRIPTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
