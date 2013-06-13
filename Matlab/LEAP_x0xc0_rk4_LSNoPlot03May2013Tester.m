@@ -176,10 +176,10 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset );
+[ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time );
 
-%finalpX = pX; % Only for plotting
-%finalpXC = pXC; % Only for plotting
+finalpX = pX; % Only for plotting
+finalpXC = pXC; % Only for plotting
 
 onTimes = onTimes/24 + absTimeOffset;
 offTimes = offTimes/24 + absTimeOffset;
@@ -187,41 +187,4 @@ offTimes = offTimes/24 + absTimeOffset;
 % Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
 
-% PLOTS
-%{
-%%%%%%%%SINUSOID WAVEFORM PLOT%%%%%%%%%
-%timeSim = tcTotal/24+Time(1);
-figure(2)
-hold on
-plot(AbsLoopTimeTotal,xTotal,'r-','LineWidth',2); %Waveform with Initial Conditions
-hold on;
-plot(AbsLoopTimeTotal,xTargetTotal,'b-','LineWidth',2); %Target Waveform
-plot(AbsLoopTimeTotal,CS,'g')
-%datetick2('x')
-hold off;
-xlabel('Time','FontSize',14)
-ylabel('Relative CBT deviation','FontSize',14)
-
-%%%%%%%%%%%%%POLAR PLOT%%%%%%%%%%%%%%%%
-figure(3)
-plot(xTotal, xcTotal,'r-','LineWidth',2); axis equal; % Waveform with Initial Conditions
-hold on;
-plot(finalpX, finalpXC,'ro','LineWidth',2); axis equal;
-plot(xTarget, xcTarget,'bs','LineWidth',2); axis equal;
-plot(xTargetTotal, xcTargetTotal,'b-','LineWidth',2); axis equal; %Target Waveform
-hold off;
-xlabel('X','FontSize',14)
-ylabel('Xc','FontSize',14)
-
-% Display Legends
-figure(2)
-datetick2('x');
-legend('IC Waveform','Target Waveform','CS Values' );
-hold off;
-figure(3)
-h = legend('IC Polar Plot','IC Current Point','Target Waveform' );
-P1 = get(h,'Position');
-P2 = [0.4 0.45 P1(3:4)];
-set(h,'Position',P2);
-hold off;
-%}
+%rk4PlotsTester( AbsLoopTimeTotal, xTotal, xTargetTotal, CS, xcTotal, finalpX, finalpXC, xTarget, xcTarget, xcTargetTotal );

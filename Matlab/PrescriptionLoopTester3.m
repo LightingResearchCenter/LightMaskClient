@@ -1,4 +1,4 @@
-function [ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset )
+function [ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time )
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
@@ -7,16 +7,16 @@ CS = zeros(numIterations,1);
 currLight = 0; %Used for keeping track of how much light the subject has received each night.
 
 %%%%%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%%%%%%
-% CBTs = zeros(numIterations,1);
-% timeLight = zeros(numIterations,1);
-% lightTime = zeros(numIterations,1);
+CBTs = zeros(numIterations,1);
+timeLight = zeros(numIterations,1);
+lightTime = zeros(numIterations,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%xTotal= zeros(numIterations,1); % Only for plotting
-%xcTotal = zeros(numIterations,1); % Only for plotting
-%xTargetTotal = zeros(numIterations,1); % Only for plotting
-%xcTargetTotal = zeros(numIterations,1); % Only for plotting
-%pLoopTimeTotal = zeros(numIterations,1); % Only for plotting
+xTotal= zeros(numIterations,1); % Only for plotting
+xcTotal = zeros(numIterations,1); % Only for plotting
+xTargetTotal = zeros(numIterations,1); % Only for plotting
+xcTargetTotal = zeros(numIterations,1); % Only for plotting
+pLoopTimeTotal = zeros(numIterations,1); % Only for plotting
 
 for i1 = 1:numIterations  
     
@@ -28,12 +28,13 @@ for i1 = 1:numIterations
     %Target Sinusoid
     xTarget = -cos(2*pi*(t1/24 - CBTminTarget/24)); %Real part of Target sinusoid
     xcTarget = sin(2*pi*(t1/24 - CBTminTarget/24)); %complex part of Target sinusoid
-    %xTargetTotal(i1) = xTarget; % Only for plotting
-    %xcTargetTotal(i1) = xcTarget; % Only for plotting
-    %pLoopTimeTotal(i1) = t1; %hours % Only for plotting
+    
+    xTargetTotal(i1) = xTarget; % Only for plotting
+    xcTargetTotal(i1) = xcTarget; % Only for plotting
+    pLoopTimeTotal(i1) = t1; %hours % Only for plotting
     
     %Absolute Loop Time (real time)
-    %AbsLoopTimeTotal = pLoopTimeTotal/24 + floor(Time(1)); % Only for plotting
+    AbsLoopTimeTotal = pLoopTimeTotal/24 + floor(Time(1)); % Only for plotting
     
     ToD = round(mod(t1,24)*10000)/10000; %Time of Day rounded to 4 decimal places back
    
@@ -56,9 +57,13 @@ for i1 = 1:numIterations
     if (Available == 1)
         [pX1 pXC1,tend,xarray,xcarray,t] = rk4stepperP(pX,pXC,maskLightLevel,tau,t1,t2,nsteps);
 
+        targetAngle = mod(atan2(xcTarget, xTarget)+pi, 2*pi); %Angle at target point
+        withLightAngle = mod(atan2(pXC1, pX1)+pi, 2*pi); %Angle at predicted light point
+        withoutLightAngle = mod(atan2(pXC2, pX2)+pi, 2*pi); %Angle at predicted without light point
+        
         % CALCULATIONS TO SEE IF ADDING LIGHT BRINGS THE CYCLE CLOSER TO THE CBTmin
-        withLight = ((pX1 - xTarget)^2) + ((pXC1 - xcTarget)^2);
-        withoutLight = ((pX2 - xTarget)^2) + ((pXC2 - xcTarget)^2);
+        withLight = pi - abs(abs(targetAngle - withLightAngle) - pi); %((pX1 - xTarget)^2) + ((pXC1 - xcTarget)^2);
+        withoutLight = pi - abs(abs(targetAngle - withoutLightAngle) - pi); %((pX2 - xTarget)^2) + ((pXC2 - xcTarget)^2);
         %If adding Light Brings the Cycle Closer to the CBTmin, then Add Light. Else Add no Light
         %Update all Arrays and Initial Conditions
     
@@ -79,23 +84,29 @@ for i1 = 1:numIterations
 
         if ((withLight < withoutLight) && (Available == 1))
             CS(i1) = maskLightLevel;
-            %xTotal(i1) = pX1; % Only for plotting
-            %xcTotal(i1) = pXC1; % Only for plotting
+            
+            xTotal(i1) = pX1; % Only for plotting
+            xcTotal(i1) = pXC1; % Only for plotting
+            
             pX = pX1;
             pXC = pXC1;
             currLight = currLight + increment;
         else
             CS(i1) = offLightLevel;
-            %xTotal(i1) = pX2; % Only for plotting
-            %xcTotal(i1) = pXC2; % Only for plotting
+            
+            xTotal(i1) = pX2; % Only for plotting
+            xcTotal(i1) = pXC2; % Only for plotting
+            
             pX = pX2;
             pXC = pXC2;
         end
     
     else
         CS(i1) = offLightLevel;
-        %xTotal(i1) = pX2; % Only for plotting
-        %xcTotal(i1) = pXC2; % Only for plotting
+        
+        xTotal(i1) = pX2; % Only for plotting
+        xcTotal(i1) = pXC2; % Only for plotting
+        
         pX = pX2;
         pXC = pXC2;
     end
@@ -122,9 +133,9 @@ for i1 = 1:numIterations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
-%     CBTs(i1) = CBTmin;
-%     timeLight(i1) = CS(i1);
-%     lightTime(i1) = ToD;
+    CBTs(i1) = CBTmin;
+    timeLight(i1) = CS(i1);
+    lightTime(i1) = ToD;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
     
     if (timeAdj(ToD) > timeAdj(CBTmin)) %Clears the amount of light received after CBTmin for the night has passed.
@@ -140,6 +151,7 @@ end % end P loop
 %%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
 % x = 1:1:numIterations;
 % y = CBTs(x);
+% figure(4)
 % plot(x,y);
 % hold all
 % z = timeLight(x);
