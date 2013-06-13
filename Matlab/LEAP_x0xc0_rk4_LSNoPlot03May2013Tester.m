@@ -74,8 +74,8 @@ CS = CS(index:end);
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour
 %initialStartTime = (datenum(time0) - floor(datenum(time0)))*24; % Daysimeter start time, hours;
-initialStartTime = (time0 - floor(time0))*24; % Previous end of Daysimeter data, relative time in hours;
-initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
+initialStartTime0 = (time0 - floor(time0))*24; % Previous end of Daysimeter data, relative time in hours;
+initialStartTime = round(initialStartTime0/increment)*increment; % rounded to nearest simulation increment
 
 if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
     initialStartTime = initialStartTime + increment;
