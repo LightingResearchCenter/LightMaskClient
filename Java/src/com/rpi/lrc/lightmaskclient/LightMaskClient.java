@@ -281,7 +281,7 @@ public class LightMaskClient extends PApplet {
 	//Creates the initial run values dialog in a new window (frame)
 	void showInitRunValuesDialog() {
 		  Frame f = new Frame("Initial Run Values");
-		  InitialRun w = new InitialRun(this, f, 175, 390);
+		  InitialRun w = new InitialRun(this, f, 175, 430);
 		  f.add(w);
 		  w.init();
 		  
@@ -497,11 +497,11 @@ public class LightMaskClient extends PApplet {
 		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
 		String[] settingsStrings = loadStrings(settingsPath);
 		FileDialog fileBrowser = new FileDialog();
-		String daySavePath = "null", logSavePath = "null";
+		String daySavePath = null, logSavePath = null;
 		
 		//Create a dialog for user to choose a folder for Daysim files if it doesn't exist
 		if (settingsStrings.length <= 1) {
-			while (daySavePath.contentEquals("null")) {
+			while (daySavePath == null) {
 				daySavePath = fileBrowser.selectFolder("Choose Daysim Folder");
 			}
 			settingsStrings = append(settingsStrings, daySavePath);
@@ -509,7 +509,7 @@ public class LightMaskClient extends PApplet {
 		
 		//Create a dialog for user to choose a folder for log files if it doesn't exist
 		if (settingsStrings.length <= 2) {
-			while (logSavePath.contentEquals("null")) {
+			while (logSavePath == null) {
 				logSavePath = fileBrowser.selectFolder("Choose Log Folder");
 			}
 			settingsStrings = append(settingsStrings, logSavePath);
