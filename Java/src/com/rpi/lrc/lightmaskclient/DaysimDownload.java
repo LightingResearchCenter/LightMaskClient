@@ -1,5 +1,6 @@
 package com.rpi.lrc.lightmaskclient;
 
+import java.awt.Toolkit;
 import java.io.File;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -79,6 +80,9 @@ public class DaysimDownload extends PApplet{
 		}
 		dthread.quit();
 		LightMaskClient.setMainText("\n\n" + "Downloading: 100% completed");
+		Toolkit.getDefaultToolkit().beep();
+		delay(500); 
+		LightMaskClient.setMainText("\n" + "  Please disconnect the Daysimeter");
 		//setup the download for processing
 		for(int i = 0; i < EEPROM.length; i++) {
 			EEPROM[i] = bytefile1[i] & 0xFF;
