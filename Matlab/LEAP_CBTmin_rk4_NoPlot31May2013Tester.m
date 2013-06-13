@@ -27,21 +27,19 @@ CBTminInitial = 2.5;
 %pathFileName = [dataPath dataFileName];
 pathFileName = DaysimeterDataFile;
 
-CBTminTarget = str2num(CBTminTarget);
-CBTminInitial = str2num(CBTminInitial);
-AvailStartTime = str2num(AvailStartTime);
-AvailEndTime = str2num(AvailEndTime);
-tau = str2num(tau);
-maskLightLevel = str2num(maskLightLevel);
-MaxLightDuration = str2num(MaxLightDuration);
+CBTminTarget = str2double(CBTminTarget);
+CBTminInitial = str2double(CBTminInitial);
+AvailStartTime = str2double(AvailStartTime);
+AvailEndTime = str2double(AvailEndTime);
+tau = str2double(tau);
+maskLightLevel = str2double(maskLightLevel);
+MaxLightDuration = str2double(MaxLightDuration);
 
 % Constants/Initial Conditions
 offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 1/12; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
-javaOffset = 719529; %Offset from matlab datstr start to java epoch
-ms2d = 86400000; %millisecond to day conversion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,22 +49,27 @@ ms2d = 86400000; %millisecond to day conversion.
 [dateStr,timeStr,~,~,CS,~] = textread(pathFileName,'%s%s%f%f%f%f','headerlines',1);
 
 [ Time, inc ] = ReadDaysimDataFromFile( dateStr, timeStr, CS );
-%Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time. The 5/24 converts from UTC to EST, a different conversion will be needed for testing in different time zones.
 
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour 
-initialStartTime = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
-initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
+initialStartTime0 = (Time(1) - floor(Time(1)))*24; % Daysimeter start time, hours
+initialStartTime = round(initialStartTime0/increment)*increment; % rounded to nearest simulation increment
+
+if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
+    initialStartTime = initialStartTime + increment;
+end
+
 if (initialStartTime >=24)
     initialStartTime = initialStartTime - 24;
     absTimeOffset = floor(Time(1)) +1;
 else
     absTimeOffset = floor(Time(1));
 end
-sRate = 1/inc ; % sample rate, 1/hours
+sRate = 1/inc;  % sample rate, 1/hours
 csTimeRelHours = (Time - floor(Time(1)))*24;
 
 % Resample CS: average value of CS during increment centered on increments
 [ CSavg, timeCSavg ] = ReSampleCS( initialStartTime, increment, csTimeRelHours, sRate, CS, Time );
+
 
 %Plot of CS and CSavg
 %figure(1)
@@ -93,15 +96,6 @@ finalX = dX;
 finalXC = dXC;
 endTime = t2/24 + absTimeOffset;
 
-%Plot Of x and xc values based on daysimeter CSavg values
-%timePlot = timePlot/24 + floor(Time(1)); % absolute time
-%figure(2)
-%plot(timePlot,dXplot,'g.-')
-%hold on
-%plot(timePlot,Xclock,'b.-')
-%plot(timeCSavg,CSavg,'g-')
-%hold off
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% START PRESCRIPTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,10 +116,10 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset );
+[ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time );
 
-%finalpX = pX; % Only for plotting
-%finalpXC = pXC; % Only for plotting
+finalpX = pX; % Only for plotting
+finalpXC = pXC; % Only for plotting
 
 onTimes = onTimes/24 + absTimeOffset;
 offTimes = offTimes/24 + absTimeOffset;
@@ -137,3 +131,5 @@ end
 
 % Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
+
+%rk4PlotsTester( AbsLoopTimeTotal, xTotal, xTargetTotal, CS, xcTotal, finalpX, finalpXC, xTarget, xcTarget, xcTargetTotal );

@@ -17,12 +17,21 @@ for i1 = 1:length(CSavg)-1
   t1 = t2; %increment startTime to where endTime is
   t2 = (t1 + increment); %increment endTime by increment
   
-  %dXplot(i1+1) = dX; % Only for plotting
-  %dXCplot(i1+1) = dXC; % Only for plotting
-  %timePlot(i1+1) = t1; % Only for plotting
-  %Xclock(i1+1) = -cos(2*pi*(t1/24-CBTminTarget/24)); % Only for plotting
+%   dXplot(i1+1) = dX; % Only for plotting
+%   dXCplot(i1+1) = dXC; % Only for plotting
+%   timePlot(i1+1) = t1; % Only for plotting
+%   Xclock(i1+1) = -cos(2*pi*(t1/24-CBTminTarget/24)); % Only for plotting
 
 end 
+
+%Plot Of x and xc values based on daysimeter CSavg values
+% timePlot = timePlot/24 + floor(Time(1)); % absolute time
+% figure(2)
+% plot(timePlot,dXplot,'g.-')
+% hold on
+% plot(timePlot,Xclock,'b.-')
+% plot(timeCSavg,CSavg,'g-')
+% hold off
 
 end
 

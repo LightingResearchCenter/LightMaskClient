@@ -30,15 +30,15 @@ time0 = '19-Nov-2012 10:48:00';
 %pathFileName = [dataPath dataFileName];
 pathFileName = DaysimeterDataFile;
 
-CBTminTarget = str2num(CBTminTarget);
-X0 = str2num(X0);
-XC0 = str2num(XC0);
+CBTminTarget = str2double(CBTminTarget);
+X0 = str2double(X0);
+XC0 = str2double(XC0);
 time0 = datenum(time0,'dd-mmm-yyyy HH:MM');
-AvailStartTime = str2num(AvailStartTime);
-AvailEndTime = str2num(AvailEndTime);
-tau = str2num(tau);
-maskLightLevel = str2num(maskLightLevel);
-MaxLightDuration = str2num(MaxLightDuration);
+AvailStartTime = str2double(AvailStartTime);
+AvailEndTime = str2double(AvailEndTime);
+tau = str2double(tau);
+maskLightLevel = str2double(maskLightLevel);
+MaxLightDuration = str2double(MaxLightDuration);
 
 onTime0 = datenum(onTime0,'dd-mmm-yyyy HH:MM');
 onTime1 = datenum(onTime1,'dd-mmm-yyyy HH:MM');
@@ -56,8 +56,6 @@ offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 1/12; % Hours 
 nsteps = 30; % number of steps used for ODE solver for each time increment
-javaOffset = 719529; %Offset from matlab datstr start to java epoch
-ms2d = 86400000; %millisecond to day conversion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +66,6 @@ ms2d = 86400000; %millisecond to day conversion.
 %CS = ones(size(CS))*0.4;
 %CS(end-1000:end-500) = 0.001;
 [ Time, inc ] = ReadDaysimDataFromFile( dateStr, timeStr, CS ); %this needs to change for the new time section.
-%Time = JT/ms2d + javaOffset - 5/24; %converts java time to matlab time.
 
 % crop Daysimeter data to begin at or after time0
 index = find(Time>=time0,1,'first');
@@ -79,6 +76,10 @@ CS = CS(index:end);
 %initialStartTime = (datenum(time0) - floor(datenum(time0)))*24; % Daysimeter start time, hours;
 initialStartTime = (time0 - floor(time0))*24; % Previous end of Daysimeter data, relative time in hours;
 initialStartTime = round(initialStartTime/increment)*increment; % rounded to nearest simulation increment
+
+if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
+    initialStartTime = initialStartTime + increment;
+end
 
 if (initialStartTime >=24) 
     initialStartTime = initialStartTime - 24;
@@ -179,10 +180,10 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset );
+[ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time );
 
-%finalpX = pX; % Only for plotting
-%finalpXC = pXC; % Only for plotting
+finalpX = pX; % Only for plotting
+finalpXC = pXC; % Only for plotting
 
 onTimes = onTimes/24 + absTimeOffset;
 offTimes = offTimes/24 + absTimeOffset;
@@ -190,41 +191,4 @@ offTimes = offTimes/24 + absTimeOffset;
 % Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
 
-% PLOTS
-%{
-%%%%%%%%SINUSOID WAVEFORM PLOT%%%%%%%%%
-%timeSim = tcTotal/24+Time(1);
-figure(2)
-hold on
-plot(AbsLoopTimeTotal,xTotal,'r-','LineWidth',2); %Waveform with Initial Conditions
-hold on;
-plot(AbsLoopTimeTotal,xTargetTotal,'b-','LineWidth',2); %Target Waveform
-plot(AbsLoopTimeTotal,CS,'g')
-%datetick2('x')
-hold off;
-xlabel('Time','FontSize',14)
-ylabel('Relative CBT deviation','FontSize',14)
-
-%%%%%%%%%%%%%POLAR PLOT%%%%%%%%%%%%%%%%
-figure(3)
-plot(xTotal, xcTotal,'r-','LineWidth',2); axis equal; % Waveform with Initial Conditions
-hold on;
-plot(finalpX, finalpXC,'ro','LineWidth',2); axis equal;
-plot(xTarget, xcTarget,'bs','LineWidth',2); axis equal;
-plot(xTargetTotal, xcTargetTotal,'b-','LineWidth',2); axis equal; %Target Waveform
-hold off;
-xlabel('X','FontSize',14)
-ylabel('Xc','FontSize',14)
-
-% Display Legends
-figure(2)
-datetick2('x');
-legend('IC Waveform','Target Waveform','CS Values' );
-hold off;
-figure(3)
-h = legend('IC Polar Plot','IC Current Point','Target Waveform' );
-P1 = get(h,'Position');
-P2 = [0.4 0.45 P1(3:4)];
-set(h,'Position',P2);
-hold off;
-%}
+%rk4PlotsTester( AbsLoopTimeTotal, xTotal, xTargetTotal, CS, xcTotal, finalpX, finalpXC, xTarget, xcTarget, xcTargetTotal );
