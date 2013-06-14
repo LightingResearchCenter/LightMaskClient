@@ -1,4 +1,4 @@
-function [ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time )
+function [ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time, plotOn )
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% Loop determines when to give or remove light%%%%%%%%%%%%%%%%%
 
@@ -7,7 +7,7 @@ CS = zeros(numIterations,1);
 currLight = 0; %Used for keeping track of how much light the subject has received each night.
 
 %%%%%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%%%%%%
-CBTs = zeros(numIterations,1);
+CBTmins = zeros(numIterations,1);
 timeLight = zeros(numIterations,1);
 lightTime = zeros(numIterations,1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ for i1 = 1:numIterations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
-    CBTs(i1) = CBTmin;
+    CBTmins(i1) = CBTmin;
     timeLight(i1) = CS(i1);
     lightTime(i1) = ToD;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
@@ -146,18 +146,23 @@ for i1 = 1:numIterations
     
 end % end P loop
 
-%%%%%%%%%%%%%%ForGraphing%%%%%%%%%%%%%%
-% x = 1:1:numIterations;
-% y = CBTs(x);
-% figure(4)
-% plot(x,y);
-% hold all
-% z = timeLight(x);
-% plot(x,z);
-% hold all
-% w = lightTime(x);
-% plot(x,w);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%CBTmin Plot
+if plotOn == 1
+    x = 1:1:numIterations;
+    y = CBTmins(x);
+    figure(4)
+    plot(x,y,'r');
+    hold on
+    z = timeLight(x);
+    plot(x,z,'g');
+    w = lightTime(x);
+    plot(x,w,'b');
+    xlabel('Relative Time','FontSize',14)
+    ylabel('CBTmin','FontSize',14)
+    
+    legend('CBTmin Time','CS Values','Time of Day');
+    hold off
+end
 
 end
 

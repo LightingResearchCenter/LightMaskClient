@@ -42,6 +42,12 @@ increment = 1/12; % Hours
 nsteps = 30; % number of steps used for ODE solver for each time increment
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%% For Plotting Options %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%To turn all plots on simply switch the plotOn boolean variable to on.
+plotOn = 1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -70,14 +76,10 @@ csTimeRelHours = (Time - floor(Time(1)))*24;
 % Resample CS: average value of CS during increment centered on increments
 [ CSavg, timeCSavg ] = ReSampleCS( initialStartTime, increment, csTimeRelHours, sRate, CS, Time );
 
-
 %Plot of CS and CSavg
-%figure(1)
-%plot(Time,CS,'r-')
-%hold on
-%plot(timeCSavg,CSavg,'b-')
-%hold off
-%datetick2('x')
+if plotOn == 1
+    csCSavgPlotter( Time, CS, timeCSavg, CSavg );
+end
 
 % Initialize dLoop start and end times for each iteration
 t1 = initialStartTime; % hours
@@ -90,7 +92,7 @@ dX = X0; %daysimeter X starts at initial X given
 dXC = XC0; %daysimeter XC starts at initial XC given
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Daysimeter Loop %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[ t1, t2, tend, xarray, xcarray, dX, dXC ] = DaysimLoop( CSavg, dX, dXC, tau, t1, t2, nsteps, increment );
+[ t1, t2, tend, xarray, xcarray, dX, dXC ] = DaysimLoop( CSavg, dX, dXC, tau, t1, t2, nsteps, increment,CBTminTarget, Time,timeCSavg, plotOn );
 
 finalX = dX;
 finalXC = dXC;
@@ -116,7 +118,7 @@ t2 = t1 + increment; %Prescription loop end time initially starts where the days
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% PRESCRIPTION LOOP %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time );
+[ onTimes, offTimes, xTotal, xcTotal, xTarget, xcTarget, xTargetTotal, xcTargetTotal, AbsLoopTimeTotal, CS ] = PrescriptionLoopTester3( numOfDaysLEAP, increment, pX, pXC, maskLightLevel, tau, t1, t2, nsteps, offLightLevel, CBTminTarget, AvailStartTime, AvailEndTime, onTimes, offTimes, onCount, offCount, MaxLightDuration, absTimeOffset, Time, plotOn);
 
 finalpX = pX; % Only for plotting
 finalpXC = pXC; % Only for plotting
@@ -132,4 +134,7 @@ end
 % Print On and Off time Arrays
 PrintOnOffArrays( onTimes, offTimes, finalX, finalXC, endTime );
 
-%rk4PlotsTester( AbsLoopTimeTotal, xTotal, xTargetTotal, CS, xcTotal, finalpX, finalpXC, xTarget, xcTarget, xcTargetTotal );
+%Sinosoid and Polar Plots
+if plotOn == 1
+    rk4PlotsTester( AbsLoopTimeTotal, xTotal, xTargetTotal, CS, xcTotal, finalpX, finalpXC, xTarget, xcTarget, xcTargetTotal );
+end
