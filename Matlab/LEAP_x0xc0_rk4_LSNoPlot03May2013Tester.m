@@ -69,6 +69,14 @@ nsteps = 30; % number of steps used for ODE solver for each time increment
 
 % crop Daysimeter data to begin at or after time0
 index = find(Time>=time0,1,'first');
+
+if isempty(index)
+    onTimes = [datenum(onTime0), datenum(onTime1), datenum(onTime2)];
+    offTimes = [datenum(offTime0), datenum(offTime1), datenum(offTime2)];
+    PrintOnOffArrays(onTimes, offTimes, X0, XC0, datenum(time0));
+    quit force;
+end
+
 Time = Time(index:end);
 CS = CS(index:end);
 
@@ -79,14 +87,6 @@ initialStartTime = round(initialStartTime0/increment)*increment; % rounded to ne
 
 if (initialStartTime < initialStartTime0) %To correct if there is an accidental round down.
     initialStartTime = initialStartTime + increment;
-end
-
-lastTime = find(Time,1,'last');
-if (initialStartTime > lastTime)
-    onTimes = [datenum(onTime0), datenum(onTime1), datenum(onTime2)];
-    offTimes = [datenum(offTime0), datenum(offTime1), datenum(offTime2)];
-    PrintOnOffArrays(onTimes, offTimes, X0, XC0, datenum(lastTime));
-    quit force;
 end
 
 if (initialStartTime >=24) 
