@@ -81,6 +81,14 @@ if (initialStartTime < initialStartTime0) %To correct if there is an accidental 
     initialStartTime = initialStartTime + increment;
 end
 
+lastTime = find(Time,1,'last');
+if (initialStartTime > lastTime)
+    onTimes = [datenum(onTime0), datenum(onTime1), datenum(onTime2)];
+    offTimes = [datenum(offTime0), datenum(offTime1), datenum(offTime2)];
+    PrintOnOffArrays(onTimes, offTimes, X0, XC0, datenum(lastTime));
+    quit force;
+end
+
 if (initialStartTime >=24) 
     initialStartTime = initialStartTime - 24;
     %absTimeOffset = floor(Time(1)) +1;

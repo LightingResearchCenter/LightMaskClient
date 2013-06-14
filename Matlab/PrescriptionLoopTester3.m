@@ -68,9 +68,7 @@ for i1 = 1:numIterations
         %Update all Arrays and Initial Conditions
     
 %%%%%%%%%%%%%%%%%%%%%%ForTesting%%%%%%%%%%%%%%%%%%%%%%%%    
-%     if (t1 >= 93.99 && t1 < 94.2) %For Testing purposes
-%         t1
-%         Available 
+%     if (Available == 1); %For Testing purposes
 %         currTime = datestr(t1/24 + absTimeOffset)
 %         format long
 %         aToD = timeAdj(ToD)
