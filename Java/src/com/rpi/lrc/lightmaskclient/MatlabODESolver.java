@@ -237,8 +237,8 @@ public class MatlabODESolver extends PApplet{
 	                		responseLog += s + "\n";
 	                	}
 	                	
-	                	LightMaskClient.appendMainText("\nCalculation error\n" + responseLog);
-	                	ErrorLog.write("Calculation Error in Parse Response");
+	                	LightMaskClient.appendMainText("\nCalculation error\n");
+	                	ErrorLog.write("Calculation Error in Parse Response" + responseLog);
 	                }
 	                LightMaskClient.calcStatus(true);
 	                process.destroy();
