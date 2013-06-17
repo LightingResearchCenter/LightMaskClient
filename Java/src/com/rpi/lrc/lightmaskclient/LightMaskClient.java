@@ -50,6 +50,9 @@ public class LightMaskClient extends PApplet {
 	static boolean maskConnected = false;
 	static boolean daysPathSet = false;
 	static boolean calcComplete = true;
+	
+	static boolean dlComplete = false;
+	static boolean progMaskStart = false;
 
 	//Device Managers
 	static DaysimDownload download;
@@ -98,6 +101,10 @@ public class LightMaskClient extends PApplet {
 			//Tries to find the mask if it isn't connected
 			maskConnected = maskManager.find_mask();
 		}
+		
+		if (!dayConnected && dlComplete && !progMaskStart) {
+			setMainText("Daysimeter disconnected.");
+		}
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -125,6 +132,7 @@ public class LightMaskClient extends PApplet {
 				else if (maskConnected){
 					taMain.setText("Calculating on/off times, please wait...");
 					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
+					progMaskStart = true;
 					
 					//If this is the initial calculation use CBTmin file
 					if (firstRun[0].toLowerCase().contains("true")){
