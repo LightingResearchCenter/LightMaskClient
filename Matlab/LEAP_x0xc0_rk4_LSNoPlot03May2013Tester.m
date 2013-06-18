@@ -52,16 +52,19 @@ offTime2 = datenum(offTime2,'dd-mmm-yyyy HH:MM');
 %AvailEndTime = 4;
 %tau = 24.2; % (hours)
 %maskLightLevel = 0.6; % Max Light Level (CS units)
+AvailStartTime = AvailStartTime + 1; %Availability starts an hour after bed time
 offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 1/12; % Hours 
+incrementDays = datenum(0000,01,0,0,increment*60,0);
+maxCor = datenum(0000,01,0,4,0,0);
 nsteps = 30; % number of steps used for ODE solver for each time increment
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% For Plotting Options %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %To turn all plots on simply switch the plotOn boolean variable to on.
-plotOn = 1;
+plotOn = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +89,29 @@ end
 Time = Time(index:end);
 CS = CS(index:end);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Checks to see if there is a gap in the daysimeter start and stop time in
+%excess of the increment range. If there is it then checks to see if the
+%gap is greater than 4 hours, where upon the code will error and the
+%subject will have to contact the researchers. Else if the gap is less than
+%4 hours corrections are made to the CS and Time arrays, filling in missing
+%times at increment intervals and setting CS to 0 for those times. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if index == 1 
+   if Time(1) - time0 > maxCor 
+       'Error'
+   elseif Time(1) - time0 > 0
+       y = round((Time(1) - time0)/incrementDays);
+       CSCor = zeros(y,1);
+       CS = [CSCor; CS];
+       TimeCor = zeros(y,1);
+       for i1 = 1:y
+           TimeCor(i1) = Time(1) - (y - i1+1)*incrementDays;
+       end
+       Time = [TimeCor; Time];
+   end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Work with relative time, in hours, with starting and ending times always rounded to the nearest increment of an hour
 %initialStartTime = (datenum(time0) - floor(datenum(time0)))*24; % Daysimeter start time, hours;
 initialStartTime0 = (time0 - floor(time0))*24; % Previous end of Daysimeter data, relative time in hours;
@@ -102,6 +128,7 @@ if (initialStartTime >=24)
 else
     absTimeOffset = floor(time0);
 end
+
 sRate = 1/inc; % sample rate, 1/hours
 %csTimeRelHours = (Time - floor(Time(1)))*24;
 csTimeRelHours = (Time - floor(time0))*24;

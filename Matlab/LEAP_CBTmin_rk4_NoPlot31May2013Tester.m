@@ -36,6 +36,7 @@ maskLightLevel = str2double(maskLightLevel);
 MaxLightDuration = str2double(MaxLightDuration);
 
 % Constants/Initial Conditions
+AvailStartTime = AvailStartTime + 1; %Availability starts an hour after bed time
 offLightLevel = 0.0; %Min Light Level (CS units)
 numOfDaysLEAP = 3;
 increment = 1/12; % Hours 
@@ -45,7 +46,7 @@ nsteps = 30; % number of steps used for ODE solver for each time increment
 %%%%%%%%%%%%%%%%%%%%%%%% For Plotting Options %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %To turn all plots on simply switch the plotOn boolean variable to on.
-plotOn = 1;
+plotOn = 0;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%% Run Daysimeter Data %%%%%%%%%%%%%%%%%%%%%%%%%%%
