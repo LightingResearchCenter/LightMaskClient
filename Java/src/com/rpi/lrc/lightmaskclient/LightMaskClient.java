@@ -117,6 +117,8 @@ public class LightMaskClient extends PApplet {
 			//Download the data from the Daysimeter and store the location of the saved file in /data/daysimeter_processed_path.txt
 			if (downloadButton.over() == true) {
 				if (dayConnected){
+					progMaskStart = false;
+					dlComplete = false;
 					download.downloadData();
 			    }
 				else{
