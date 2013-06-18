@@ -132,25 +132,7 @@ public class LightMaskClient extends PApplet {
 					taMain.setText("Please select the processed data file to use by downloading it from the Daysimeter or loading it from your computer using the buttons on the left.");
 				}
 				else if (maskConnected){
-					taMain.setText("Calculating on/off times, please wait...");
-					String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
-					progMaskStart = true;
-					
-					//If this is the initial calculation use CBTmin file
-					if (firstRun[0].toLowerCase().contains("true")){
-						String[] values = loadStrings("/src/data/Lightmask_initial_values.txt");	//Gets initial values from file
-						appendMainText("\nInitial Run");
-						odesolver.calculateInitial(values[1], values[2], values[3], values[4],		//Calculates the values for the next run
-								values[5], values[6], values[7], values[8]);
-						
-						firstRun[0] = "false";										
-						saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
-					}
-					//else use x0xc0 file
-					else{
-						odesolver.calculate();
-					}
-					daysPathSet = false;
+					showAvailWinDialog();
 				}
 				else {
 					taMain.setText("LightMask not available. Please make sure that it is plugged in.");
@@ -292,6 +274,20 @@ public class LightMaskClient extends PApplet {
 	void showInitRunValuesDialog() {
 		  Frame f = new Frame("Initial Run Values");
 		  InitialRun w = new InitialRun(this, f, 175, 430);
+		  f.add(w);
+		  w.init();
+		  
+		  f.setTitle("Initial Run Values");
+		  f.setSize(w.w, w.h);
+		  f.setLocation(100, 100);
+		  f.setResizable(false);
+		  f.setVisible(true);
+		}
+	
+	//Creates the initial run values dialog in a new window (frame)
+	void showAvailWinDialog() {
+		  Frame f = new Frame("Initial Run Values");
+		  AvailWin w = new AvailWin(this, f, 175, 150, odesolver);
 		  f.add(w);
 		  w.init();
 		  
