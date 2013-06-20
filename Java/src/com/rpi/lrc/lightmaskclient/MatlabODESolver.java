@@ -199,7 +199,8 @@ public class MatlabODESolver extends PApplet{
 		                
 		                //append the datalog.txt with new data and update Lightmask_last_values.txt
 		                try {
-		                    PrintWriter log = new PrintWriter(new FileWriter(workingDirectory + "\\data\\datalog.txt", true));
+							String path = workingDirectory + "\\data\\datalog.txt";
+		                    PrintWriter log = new PrintWriter(new FileWriter(path, true));
 		                    log.println("Log from: " + dateFormat.format(cal.getTime()));
 		                    final int nArgs = labels.length;
 		                    for (int k = 0; k < logArray.length && k < nArgs; k++){
@@ -218,8 +219,13 @@ public class MatlabODESolver extends PApplet{
 		                    	logArray[nArgs + 3 + t] = ODEresponse2[t];
 		                    }
 		                    log.println("");
-		                    
 		                    log.close();
+		                    
+		                    String settingsPathStr = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		                    String[] settingsStrings = loadStrings(settingsPathStr);
+		                    String copy[] = loadStrings(path);
+		                    saveStrings(settingsStrings[1] + "\\datalog.txt", copy);
+							
 		                    saveStrings(workingDirectory + "\\data\\Lightmask_last_values.txt", logArray);
 		                    
 		                } catch (IOException e) {
