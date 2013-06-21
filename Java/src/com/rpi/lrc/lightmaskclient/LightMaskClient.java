@@ -208,7 +208,17 @@ public class LightMaskClient extends PApplet {
 				showPulseSettingsDialog();
 				showInitRunValuesDialog();
 			}
-
+			
+			else if (event.getValue() == 9) {
+				String initRunFlag[] = loadStrings(initRunFlagPath);
+				if (initRunFlag[3].contentEquals("true")) {
+					initRunFlag[3] = "false";
+				}
+				else {
+					initRunFlag[3] = "true";
+				}
+				saveStrings(initRunFlagPath, initRunFlag);
+			}
 			ddm.researchTools.setCaptionLabel("Research Menu");
 		}
 	}
