@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.BindException;
@@ -15,6 +17,7 @@ import java.net.ServerSocket;
 import java.util.Date;
 
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 
 import controlP5.ControlEvent;
 
@@ -49,8 +52,8 @@ public class LightMaskClient extends PApplet {
 	boolean dayConnected = false;
 	static boolean maskConnected = false;
 	static boolean daysPathSet = false;
-	static boolean calcComplete = true;
 	
+	static boolean calcComplete = true;
 	static boolean dlComplete = false;
 	static boolean progMaskStart = false;
 	static boolean progMaskComplete = false;
@@ -408,9 +411,17 @@ public class LightMaskClient extends PApplet {
 				}
 			}
 			appendMainText("\nPlease disconnect the Light Mask.");
+			ActionListener listener = new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					resetFlags();
+				}
+			};
+			Timer timer = new Timer(30000, listener);
+			timer.setRepeats(false);
+			timer.start();
 		}
 		else {
-			taMain.setText("LightMask not available. Please make sure that it is plugged in and this is the only client running.");
+			taMain.setText("LightMask not available. Please make sure that it is plugged in.");
 		}
 	}
 	
@@ -568,6 +579,15 @@ public class LightMaskClient extends PApplet {
 			odesolver.calculate();
 		}
 		LightMaskClient.daysPathSet = false;
+	}
+	
+	void resetFlags() {
+		calcComplete = true;
+		dlComplete = false;
+		progMaskStart = false;
+		progMaskComplete = false;
+		availWinOpen = false;
+		setMainText("Welcome to the Daysimeter and Light Mask Programing Station. Please connect your Daysimeter.");
 	}
 }
 

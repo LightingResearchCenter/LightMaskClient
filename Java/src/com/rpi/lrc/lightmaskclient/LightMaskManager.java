@@ -164,7 +164,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 	}
 
 	public void fireUnableToReadEvent() {
-		LightMaskClient.setMainText("\nDisconnected from device");
+		LightMaskClient.setMainText("Light Mask disconnected.");
 		LightMaskClient.maskConnected = false;			
 	}
 	
