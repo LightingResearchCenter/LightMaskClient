@@ -53,6 +53,9 @@ public class LightMaskClient extends PApplet {
 	
 	static boolean dlComplete = false;
 	static boolean progMaskStart = false;
+	static boolean progMaskComplete = false;
+	static boolean availWinOpen = false;
+	static String initRunFlagPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
 
 	//Device Managers
 	static DaysimDownload download;
@@ -102,8 +105,16 @@ public class LightMaskClient extends PApplet {
 			maskConnected = maskManager.find_mask();
 		}
 		
-		if (!dayConnected && dlComplete && !progMaskStart) {
-			setMainText("Daysimeter disconnected.");
+		if (!dayConnected && dlComplete && !progMaskStart && !maskConnected) {
+			setMainText("Daysimeter disconnected. Please connect the Light Mask to program it.");
+		}
+		
+		else if (dayConnected && !dlComplete && !progMaskStart) {
+			setMainText("Daysimeter connected. Press the red DOWNLOAD DATA button to download new data.");
+		}
+		
+		else if (maskConnected && dlComplete && !progMaskStart && !availWinOpen) {
+			setMainText("Light Mask connected. Please press the green PROGRAM MASK button to program the Light Mask.");
 		}
 	}
 	
@@ -129,10 +140,16 @@ public class LightMaskClient extends PApplet {
 			//Set the Mask times based on the Daysimeter file and Matlab calculations
 			else if (programButton.over() == true){
 				if (daysPathSet == false){
-					taMain.setText("Please select the processed data file to use by downloading it from the Daysimeter or loading it from your computer using the buttons on the left.");
+					taMain.setText("Please select the processed data file to use by downloading it from the Daysimeter.");
 				}
 				else if (maskConnected){
-					showAvailWinDialog();
+					String dialogFlag[] = loadStrings(initRunFlagPath);
+					if (dialogFlag[3].contentEquals("true")) {
+						showAvailWinDialog();
+					}
+					else {
+						calcMaskTimes();
+					}
 				}
 				else {
 					taMain.setText("LightMask not available. Please make sure that it is plugged in.");
@@ -232,7 +249,7 @@ public class LightMaskClient extends PApplet {
 	//Set up main text for displaying information
 	private void initTextArea(){
 		//Creates and sets up the text area
-		taMain = new TextArea("Welcome to the Daysimeter and Lightmask Programing Station.", 5, 5, 3);
+		taMain = new TextArea("Welcome to the Daysimeter and Lightmask Programing Station. Please connect your Daysimeter.", 5, 5, 3);
 		taMain.setFont(new Font("Calibri", Font.PLAIN, 18));
 		taMain.setBackground(Color.darkGray);
 		taMain.setForeground(Color.white);
@@ -290,6 +307,8 @@ public class LightMaskClient extends PApplet {
 		  AvailWin w = new AvailWin(this, f, 175, 150, odesolver);
 		  f.add(w);
 		  w.init();
+		  setMainText("Please make changes, if necessary, to your sleep and wake times " +
+		  		"and press SUBMIT to continue.");
 		  
 		  f.setTitle("Initial Run Values");
 		  f.setSize(w.w, w.h);
@@ -363,7 +382,7 @@ public class LightMaskClient extends PApplet {
 	//Checks the mask schedule and outputs it to the text area
 	public void checkSchedule () {
 		if( maskConnected){
-			taMain.setText("                  LightMask Schedule\n");
+			taMain.setText("                  Light Mask Schedule\n");
 			taMain.append("             ON                               OFF\n");
 			maskManager.sendCommand("getOn:!");
 			
@@ -388,6 +407,7 @@ public class LightMaskClient extends PApplet {
 					taMain.append(i + maskManager.getMaskSchedule(i));
 				}
 			}
+			appendMainText("\nPlease disconnect the Light Mask.");
 		}
 		else {
 			taMain.setText("LightMask not available. Please make sure that it is plugged in and this is the only client running.");
@@ -519,11 +539,35 @@ public class LightMaskClient extends PApplet {
 				logSavePath = fileBrowser.selectFolder("Choose Log Folder");
 			}
 			settingsStrings = append(settingsStrings, logSavePath);
-			saveStrings(settingsPath, settingsStrings);
 		}
+		
+		if (settingsStrings.length <= 3) {
+			settingsStrings = append(settingsStrings, "true");
+		}
+		saveStrings(settingsPath, settingsStrings);
 		ErrorLog l = new ErrorLog();
 		l.setLogPath();					//Sets the path for the log files
 		
+	}
+	
+	void calcMaskTimes() {
+		LightMaskClient.setMainText("Calculating on/off times, please wait...");
+		String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
+		LightMaskClient.progMaskStart = true;
+		
+		//If this is the initial calculation use CBTmin file
+		if (firstRun[0].toLowerCase().contains("true")){
+			LightMaskClient.appendMainText("\nInitial Run");
+			odesolver.calculateInitial();
+			
+			firstRun[0] = "false";										
+			saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
+		}
+		//else use x0xc0 file
+		else{
+			odesolver.calculate();
+		}
+		LightMaskClient.daysPathSet = false;
 	}
 }
 

@@ -278,6 +278,7 @@ public class MatlabODESolver extends PApplet{
 	    while (nIncrement < 3) {}
 	    delay (200);
 	    parent.checkSchedule();
+	    LightMaskClient.progMaskComplete = true;
 	    nIncrement = 0;
 	}
 	

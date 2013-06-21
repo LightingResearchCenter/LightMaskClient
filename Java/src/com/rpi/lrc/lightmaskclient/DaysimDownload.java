@@ -70,8 +70,8 @@ public class DaysimDownload extends PApplet{
 		dthread.start();
 		dataready = false;
 		while(!dataready) {
-			if((millis() - start)/190 < 99) {
-				LightMaskClient.setMainText("\n\n" + "Downloading: " + (millis() - start)/190 + "% completed");
+			if((millis() - start)/175 < 99) {
+				LightMaskClient.setMainText("\n\n" + "Downloading: " + (millis() - start)/175 + "% completed");
 			}
 			else {
 				LightMaskClient.setMainText("Downloading: " + 99 + "% completed");
@@ -82,7 +82,7 @@ public class DaysimDownload extends PApplet{
 		LightMaskClient.setMainText("\n\n" + "Downloading: 100% completed");
 		Toolkit.getDefaultToolkit().beep();
 		delay(1000); 
-		LightMaskClient.setMainText("\n" + "  Please disconnect the Daysimeter");
+		LightMaskClient.setMainText("Please disconnect the Daysimeter");
 		LightMaskClient.dlComplete = true;
 		//setup the download for processing
 		for(int i = 0; i < EEPROM.length; i++) {

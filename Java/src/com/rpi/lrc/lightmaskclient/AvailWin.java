@@ -38,6 +38,7 @@ public class AvailWin extends PApplet {
 			.setPosition(10, 90);
 		cp5.addButton("Cancel")
 			.setPosition(90, 90);
+		LightMaskClient.availWinOpen = true;
 	}
 	
 	public void draw() {
@@ -64,27 +65,12 @@ public class AvailWin extends PApplet {
 		
 		fr.dispose();
 		
-		LightMaskClient.setMainText("Calculating on/off times, please wait...");
-		String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
-		LightMaskClient.progMaskStart = true;
-		
-		//If this is the initial calculation use CBTmin file
-		if (firstRun[0].toLowerCase().contains("true")){
-			LightMaskClient.appendMainText("\nInitial Run");
-			odeSolver.calculateInitial();
-			
-			firstRun[0] = "false";										
-			saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
-		}
-		//else use x0xc0 file
-		else{
-			odeSolver.calculate();
-		}
-		LightMaskClient.daysPathSet = false;
+		parent.calcMaskTimes();
 	}
 
 	void Cancel(int theValue) {
 		LightMaskClient.setMainText("");
+		LightMaskClient.availWinOpen = false;
 		fr.dispose();
 	}
 	
