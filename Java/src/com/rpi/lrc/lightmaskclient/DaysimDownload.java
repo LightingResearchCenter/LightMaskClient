@@ -229,7 +229,7 @@ public class DaysimDownload extends PApplet{
 		  a[(i)/8] = 256*EEPROM[i + 6] + EEPROM[i + 7];
   
 		  //set resets to zero by default
-		  if((r[(i)/8] > 10000*g[(i)/8]) && (b[(i)/8] > 10000*g[(i)/8])) {
+		  if((r[(i)/8] == 65278) && (b[(i)/8] == 65278) && (g[i/8] == 0)) {
 			  r[(i)/8] = 0;
 			  g[(i)/8] = 0;
 			  b[(i)/8] = 0;
