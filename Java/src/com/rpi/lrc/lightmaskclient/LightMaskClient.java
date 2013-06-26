@@ -119,6 +119,17 @@ public class LightMaskClient extends PApplet {
 		else if (maskConnected && dlComplete && !progMaskStart && !availWinOpen) {
 			setMainText("Light Mask connected. Please press the green PROGRAM MASK button to program the Light Mask.");
 		}
+		
+		else if (!maskConnected && progMaskComplete) {
+			ActionListener listener = new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					resetFlags();
+				}
+			};
+			Timer timer = new Timer(30000, listener);
+			timer.setRepeats(false);
+			timer.start();
+		}
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -421,14 +432,7 @@ public class LightMaskClient extends PApplet {
 				}
 			}
 			appendMainText("\nPlease disconnect the Light Mask.");
-			ActionListener listener = new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					resetFlags();
-				}
-			};
-			Timer timer = new Timer(30000, listener);
-			timer.setRepeats(false);
-			timer.start();
+			progMaskComplete = true;
 		}
 		else {
 			taMain.setText("LightMask not available. Please make sure that it is plugged in.");
