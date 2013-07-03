@@ -1,0 +1,21 @@
+999
+3
+7
+22
+3
+24.2
+.5
+5
+blue
+===============Only use numbers above this line
+Format of this file is in order:
+Subject ID
+CBTmin
+CBTmin target
+availStartTime
+availEndTime
+Tau
+maskLightLevel (CS)
+maxDur
+maskColor
+
