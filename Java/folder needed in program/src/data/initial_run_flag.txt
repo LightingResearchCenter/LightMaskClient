@@ -1,0 +1,4 @@
+false
+C:\Users\pentla\Documents\Daysimeter
+C:\Users\pentla\Documents\Daysimeter\Log
+true
