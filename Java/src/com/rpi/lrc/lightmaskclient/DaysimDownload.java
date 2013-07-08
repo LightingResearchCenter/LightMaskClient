@@ -170,7 +170,7 @@ public class DaysimDownload extends PApplet{
 		//Open File Chooser Dialog window with default file name.
 		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
 		String[] settingsStrings = loadStrings(settingsPath);
-		String savePath = settingsStrings[1] + "/Day" + ID + "_" + Date + ".raw";		
+		String savePath = settingsStrings[1] + "/Day" + ID + "_" + Date;		
 		
 		if (savePath == null){
 			//User exited without choosing a file
@@ -184,20 +184,13 @@ public class DaysimDownload extends PApplet{
 			}
 			//save processed file
 			String[] processedPath = new String[1];
-			processedPath[0] = savePath.substring(0, savePath.length() - 4) + "_processed.txt";
+			processedPath[0] = savePath + "_processed.txt";
 			saveStrings(processedPath[0], processed);
-
-			//save a raw file
-			int[] sEEPROM = new int[131072];
-			for(int i = 0; i < header.length; i++) {
-				sEEPROM[i] = header[i];
-			}
-			for(int i = 0; i < EEPROM.length; i++) {
-				sEEPROM[i + 1024] = EEPROM[i];
-			}
-			saveStrings( savePath, str(sEEPROM));
+			
 			String workingDirectory = new String(System.getProperty("user.dir"));
 			saveStrings(workingDirectory + "\\src\\data\\daysimeter_processed_path.txt", processedPath);
+			saveBytes(savePath + "_data.bin", bytefile1);
+			saveBytes(savePath + "_header.bin", bytefile2);
 			LightMaskClient.daysPathSet = true;
 		}
 	}

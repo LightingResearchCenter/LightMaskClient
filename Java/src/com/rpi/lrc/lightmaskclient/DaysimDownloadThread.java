@@ -35,7 +35,7 @@ public class DaysimDownloadThread extends Thread {
 			//byte[] b = new byte[(int)log_info.length()];
 			log_info.read(LightMaskClient.download.bytefile2);
 		} catch (FileNotFoundException e) {
-			ErrorLog.write("Log infro removed from RAM");
+			ErrorLog.write("Log info removed from RAM");
 			e.printStackTrace();
 		} catch (IOException e) {
 			ErrorLog.write(e.getMessage());
