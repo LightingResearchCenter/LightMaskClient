@@ -41,10 +41,10 @@ for i1 = 1:numIterations
     CBTmin = XXC2CBTmin((t1/24 + absTimeOffset), pX, pXC);
     ActEndTime = mod(CBTmin - 1, 24); %The treatment will end 1 hour prior to CBTmin
     
-    if  (timeAdj(mod(AvailStartTime,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
-        ActStartTime = mod(ActEndTime - MaxLightDuration, 24); %If ActEndTime - MaxLightDuration is later than the AvailStartTime + increment, start at ActEndTime - MaxLightDuration.
+    if  (timeAdj(mod(AvailStartTime + 1,24)) < timeAdj(mod(ActEndTime - MaxLightDuration, 24)))
+        ActStartTime = mod(ActEndTime - MaxLightDuration, 24); %If ActEndTime - MaxLightDuration is later than the AvailStartTime + 1 hour, start at ActEndTime - MaxLightDuration.
     else
-        ActStartTime = mod(AvailStartTime, 24); %Else start at AvailStartTime + increment.
+        ActStartTime = mod(AvailStartTime + 1, 24); %Else start at AvailStartTime + 1 hour.
     end
     
     if (timeAdj(ActStartTime) > timeAdj(ActEndTime)) %Now ActEndTime is no more than MaxLightDuration ahead of ActStartTime. 
