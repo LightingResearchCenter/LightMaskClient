@@ -181,7 +181,7 @@ public class DaysimDownload extends PApplet{
 			// Saves the file in savePath and saves the path in the processed path txt file
 			String[] processedPath = new String[1];
 			processedPath[0] = savePath + "_processed.txt";
-			saveStrings("/src/data/daysimeter_processed_path.txt", processedPath);
+			saveStrings(new File("").getAbsolutePath() + "/src/data/daysimeter_processed_path.txt", processedPath);
 			saveStrings(processedPath[0], processed);
 			
 			// Saves the 2 binary files from the daysimeter
@@ -235,8 +235,8 @@ public class DaysimDownload extends PApplet{
   		int temp = 0;
   		int j = 0;
   		
-  		String[] s = loadStrings("/src/data/Day12_Cal_Values.txt");
-  		
+  		String pathName = new File("").getAbsolutePath();
+  		String[] s = loadStrings(pathName + "\\src\\data\\Day12_Cal_Values.txt");
   
   		// Scone/macula
   		for(int i = 0; i < s[1].length(); i++) {
@@ -323,7 +323,7 @@ public class DaysimDownload extends PApplet{
   		j = 0;
   
   		// RGBcal
-  		s = loadStrings("/src/data/Day12 RGB Values.txt");
+  		s = loadStrings(pathName + "\\src\\data\\Day12 RGB Values.txt");
   		for(int i = 0; i < s[ID].length(); i++) {
   			if(s[ID].charAt(i) == 9) {
   				if(temp != 0) {
