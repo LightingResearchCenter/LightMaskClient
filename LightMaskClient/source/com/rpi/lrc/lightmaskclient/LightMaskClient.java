@@ -108,6 +108,7 @@ public class LightMaskClient extends PApplet {
 			maskConnected = maskManager.find_mask();
 		}
 		
+		// Series of prompts the the user indicated by flags
 		if (!dayConnected && dlComplete && !progMaskStart && !maskConnected) {
 			setMainText("Daysimeter disconnected. Please connect the Light Mask to program it.");
 		}
@@ -197,7 +198,7 @@ public class LightMaskClient extends PApplet {
 				maskManager.sendCommand("getClock:!");
 			}
 			
-			//Check the current pulse duration, intensity, and repetition period
+			// Check the current pulse duration, intensity, and repetition period
 			else if (event.getValue() == 5) {
 				checkPulseSettings();
 			}
@@ -207,12 +208,12 @@ public class LightMaskClient extends PApplet {
 				showPulseSettingsDialog();
 			}
 			
-			//Creates a dialog to set the initial run values
+			// Creates a dialog to set the initial run values
 			else if (event.getValue() == 7) {
 				showInitRunValuesDialog();
 			}
 			
-			//Sets the mask time and creates dialogs to set the mask pulse settings & initial run values
+			// Sets the mask time and creates dialogs to set the mask pulse settings & initial run values
 			else if (event.getValue() == 8) {
 				String date = year() + "," + month() + "," + day() + "," + hour() + "," + minute();
 				maskManager.sendCommand("setClock:" + date + " !");
@@ -220,6 +221,7 @@ public class LightMaskClient extends PApplet {
 				showInitRunValuesDialog();
 			}
 			
+			// Toggles whether there is a popup for the user to set bed time
 			else if (event.getValue() == 9) {
 				String initRunFlag[] = loadStrings(initRunFlagPath);
 				if (initRunFlag[3].contentEquals("true")) {
@@ -344,9 +346,6 @@ public class LightMaskClient extends PApplet {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////File Handling
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	//TODO
-		//Find a better way of doing this 
 	
 	/** This scans all drives to find the Daysimeter.
 	  *  Daysimeter is identified as a drive with only two files that
@@ -545,12 +544,12 @@ public class LightMaskClient extends PApplet {
 	
 	//Sets the paths for the daysimeter files and the log files
 	void setPaths () {
-		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		String settingsPath = "/src/data/initial_run_flag.txt";
 		String[] settingsStrings = loadStrings(settingsPath);
 		FileDialog fileBrowser = new FileDialog();
 		String daySavePath = null, logSavePath = null;
 		
-		//Create a dialog for user to choose a folder for Daysim files if it doesn't exist
+		// Create a dialog for user to choose a folder for Daysim files if it doesn't exist
 		if (settingsStrings.length <= 1) {
 			while (daySavePath == null) {
 				daySavePath = fileBrowser.selectFolder("Choose Daysim Folder");
@@ -558,7 +557,7 @@ public class LightMaskClient extends PApplet {
 			settingsStrings = append(settingsStrings, daySavePath);
 		}
 		
-		//Create a dialog for user to choose a folder for log files if it doesn't exist
+		// Create a dialog for user to choose a folder for log files if it doesn't exist
 		if (settingsStrings.length <= 2) {
 			while (logSavePath == null) {
 				logSavePath = fileBrowser.selectFolder("Choose Log Folder");
@@ -566,35 +565,40 @@ public class LightMaskClient extends PApplet {
 			settingsStrings = append(settingsStrings, logSavePath);
 		}
 		
+		// Flag for toggling whether the user inputs their bed time or not
 		if (settingsStrings.length <= 3) {
 			settingsStrings = append(settingsStrings, "true");
 		}
 		saveStrings(settingsPath, settingsStrings);
+		// Creates the error log instance and sets its path
 		ErrorLog l = new ErrorLog();
-		l.setLogPath();					//Sets the path for the log files
+		l.setLogPath();
 		
 	}
 	
 	void calcMaskTimes() {
 		LightMaskClient.setMainText("Calculating on/off times, please wait...");
-		String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");	//Loads settings file
+		//Loads settings file
+		String[] firstRun = loadStrings("/src/data/initial_run_flag.txt");
 		LightMaskClient.progMaskStart = true;
 		
-		//If this is the initial calculation use CBTmin file
+		// If this is the initial calculation use CBTmin file
 		if (firstRun[0].toLowerCase().contains("true")){
 			LightMaskClient.appendMainText("\nInitial Run");
 			odesolver.calculateInitial();
 			
+			//Sets the initial run flag to false 
 			firstRun[0] = "false";										
-			saveStrings("/src/data/initial_run_flag.txt", firstRun);	//Sets the initial run flag to false 
+			saveStrings("/src/data/initial_run_flag.txt", firstRun);
 		}
-		//else use x0xc0 file
+		// Else use x0xc0 file
 		else{
 			odesolver.calculate();
 		}
 		LightMaskClient.daysPathSet = false;
 	}
 	
+	// Resets all of the flags for the client and resets the main text message
 	void resetFlags() {
 		calcComplete = true;
 		dlComplete = false;

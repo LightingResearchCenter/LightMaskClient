@@ -544,7 +544,7 @@ public class LightMaskClient extends PApplet {
 	
 	//Sets the paths for the daysimeter files and the log files
 	void setPaths () {
-		String settingsPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
+		String settingsPath = "/src/data/initial_run_flag.txt";
 		String[] settingsStrings = loadStrings(settingsPath);
 		FileDialog fileBrowser = new FileDialog();
 		String daySavePath = null, logSavePath = null;
