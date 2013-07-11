@@ -38,12 +38,16 @@ public class InitialRun extends PApplet {
 				.setText(existingValues[i]);
 		}
 		
+		Boolean isBlue = true;
+		if (existingValues[8].contentEquals("red")) {
+			isBlue = false;
+		}
 		cp5.addToggle("Mask Color")
-		.setValue(true)
+		.setValue(isBlue)
 		.setColorActive(color(0, 164, 237))
 		.setColorBackground(color(215, 0, 0))
 		.setPosition(10, 330);
-
+		
 		cp5.addButton("Submit")
 		.setPosition(10, 370);
 		cp5.addButton("Cancel")
