@@ -58,6 +58,7 @@ public class LightMaskClient extends PApplet {
 	static boolean progMaskStart = false;
 	static boolean progMaskComplete = false;
 	static boolean availWinOpen = false;
+	boolean firstRun = true;
 	static String initRunFlagPath = new File("").getAbsolutePath() + "/src/data/initial_run_flag.txt";
 
 	//Device Managers
@@ -121,7 +122,7 @@ public class LightMaskClient extends PApplet {
 			setMainText("Light Mask connected. Please press the green PROGRAM MASK button to program the Light Mask.");
 		}
 		
-		else if (!maskConnected && progMaskComplete) {
+		else if (!maskConnected && progMaskComplete && firstRun) {
 			ActionListener listener = new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					resetFlags();
@@ -130,6 +131,7 @@ public class LightMaskClient extends PApplet {
 			Timer timer = new Timer(30000, listener);
 			timer.setRepeats(false);
 			timer.start();
+			firstRun = false;
 		}
 	}
 	
@@ -600,11 +602,12 @@ public class LightMaskClient extends PApplet {
 	
 	// Resets all of the flags for the client and resets the main text message
 	void resetFlags() {
-		calcComplete = false;
+		calcComplete = true;
 		dlComplete = false;
 		progMaskStart = false;
 		progMaskComplete = false;
 		availWinOpen = false;
+		firstRun = true;
 		setMainText("Welcome to the Daysimeter and Light Mask Programing Station. Please connect your Daysimeter.");
 	}
 }
