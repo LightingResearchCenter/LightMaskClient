@@ -600,7 +600,7 @@ public class LightMaskClient extends PApplet {
 	
 	// Resets all of the flags for the client and resets the main text message
 	void resetFlags() {
-		calcComplete = true;
+		calcComplete = false;
 		dlComplete = false;
 		progMaskStart = false;
 		progMaskComplete = false;
