@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Wed Apr 17 11:07:30 EDT 2013
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=LightMaskClient_fat.jar
+manifest.mergeall=true
+manifest.mainclass=com.rpi.lrc.lightmaskclient.LightMaskClient
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

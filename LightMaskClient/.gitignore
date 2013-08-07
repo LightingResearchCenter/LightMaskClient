@@ -1,0 +1,15 @@
+*.class
+bin/*
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Compiled Programs #
+applet/*
+application.*/*
+
+src/data/datalog.txt
+src/data/dasimeter_last_values.txt
+src/data/dasimeter_processed_path.txt

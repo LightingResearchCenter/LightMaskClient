@@ -1,4 +1,4 @@
-false
-C:\Users\pentla\Documents\Daysimeter
-C:\Users\pentla\Documents\Daysimeter\Log
+true
+C:\Users\kundlj\Desktop
+C:\Users\kundlj\Desktop
 true

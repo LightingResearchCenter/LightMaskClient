@@ -1,0 +1,15 @@
+#Fat Jar Configuration File
+#Wed Apr 17 12:16:29 EDT 2013
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=LightMaskClient32.jar
+manifest.mergeall=true
+manifest.mainclass=com.rpi.lrc.lightmaskclient.LightMaskClient
+onejar.expand.dir=src/data/
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=<inc|LightMaskClient/lib>;<inc|LightMaskClient/src>~CBTmin.exe;<inc|LightMaskClient/src>~One-JAR.txt;<inc|LightMaskClient/src>~x0xc0.exe
