@@ -120,6 +120,7 @@ public class LightMaskManager implements DataReceivedActionListener {
 		for (int i =0; i< 7; i++){
 			if (onT[i] != null){  //If valid calendar on times
 				formatedTimes = "on_Times:"+i+","+onT[i].get(Calendar.YEAR)+","+formatter.format(onT[i].get(Calendar.MONTH))+","+formatter.format(onT[i].get(Calendar.DAY_OF_MONTH))+","+formatter.format(onT[i].get(Calendar.HOUR_OF_DAY))+","+formatter.format(onT[i].get(Calendar.MINUTE))+ "!";
+				//LightMaskClient.appendMainText(formatedTimes);
 				sendCommand(formatedTimes);
 				try {
 					Thread.sleep(100);
