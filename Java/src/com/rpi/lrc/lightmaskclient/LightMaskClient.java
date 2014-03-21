@@ -33,6 +33,7 @@ public class LightMaskClient extends PApplet {
 	static TextArea taMain;		//Initializes the main text area for output 
 	Panel mainPanel;			//The main window of the program
 	static Date date = new Date("05/15/2012 13:12");
+	static String debugString;
 
 	//Colored Buttons
 	Button downloadButton;
