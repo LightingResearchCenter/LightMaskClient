@@ -320,7 +320,7 @@ public class MatlabODESolver extends PApplet{
 			date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(month);
 			Calendar cal = Calendar.getInstance();
 		    cal.setTime(date);
-		    return cal.get(Calendar.MONTH)+1;
+		    return cal.get(Calendar.MONTH);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			ErrorLog.write(e.getMessage());
