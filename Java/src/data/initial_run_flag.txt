@@ -1,1 +1,4 @@
-false
+true
+C:\Users\pentla\Documents\Daysim
+C:\Users\pentla\Documents\Daysim\Log
+true
