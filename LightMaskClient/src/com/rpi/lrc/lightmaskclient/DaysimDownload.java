@@ -27,7 +27,7 @@ public class DaysimDownload extends PApplet{
 	//for calibration
 	float[] smac, vmac, mel, vp, vlam, CLAcal, RGBcal;
 	String [] asciiheader;
-	boolean isnew;
+	boolean isnew, isUTC;
 
 	//to update GUI
 	PApplet app;
@@ -62,6 +62,7 @@ public class DaysimDownload extends PApplet{
 		RGBcal = new float[3];
 		CLAcal = new float[4];
 		isnew = false;
+		isUTC = false;
 		
 		app = papp;
 	}
@@ -98,6 +99,7 @@ public class DaysimDownload extends PApplet{
 		
 		asciiheader = MakeList(header);
 		isnew = asciiheader[2].contains("daysimeter");
+		isUTC = asciiheader[1].contains("1.3") || asciiheader[1].contains("1.4")
 		
 		organizeEEPROM();
 		processData();
@@ -280,13 +282,52 @@ public class DaysimDownload extends PApplet{
 		  }
 	  }
 	  if(isnew) {
-		  ID = Integer.parseInt(asciiheader[3]);
+		  ID = Integer.parseInt(asciiheader[8]);
 		  mm = Integer.parseInt(asciiheader[7].substring(0, 2));
 		  dd = Integer.parseInt(asciiheader[7].substring(3, 5));
 		  yy = Integer.parseInt(asciiheader[7].substring(6, 8));
 		  HH = Integer.parseInt(asciiheader[7].substring(9, 11));
 		  MM = Integer.parseInt(asciiheader[7].substring(12, 14));
-		  period = Integer.parseInt(asciiheader[8]);
+		  period = Integer.parseInt(asciiheader[3]);
+				  
+		  if(isUTC) {
+			  offset = Calendar.get(Calendar.DST_OFFSET) / 3600000;
+			  //apply offset, but if offset rolls us into a new day, we need to account for that
+			  if (HH + offset > 23) {
+				  dd += 1;
+				  HH = (HH + offset) % 24;
+				  //if our new day rolls us into a new month, account for that
+				  //30 days have September, April, June, and November
+				  if(dd > 30 && (mm == 9 || mm == 4 || mm == 6 || mm == 11)) {
+					  dd = 1;
+					  mm += 1;
+				  }
+				  //All the rest have 31, except for February who is a fuckwad.
+				  else if (dd > 31 && !(mm == 9 || mm == 4 || mm == 6 || mm == 11 || mm == 2)) {
+					  dd = 1;
+					  mm += 1;
+				  }
+				  //If it is February and not a leap year
+				  else if (dd > 28 && (yy%4 != 0)) {
+					  dd = 1;
+					  mm += 1;
+				  }
+				  //If it is February and a leap year
+				  else if (dd > 29 && (yy%4 == 0)) {
+					  dd = 1;
+					  mm += 1;
+				  }
+				  //Did we rollover our year doing this?
+				  if (mm > 12) {
+					  mm = 1;
+					  yy += 1;
+				  }
+				 
+			  }
+			  else {
+				  HH = HH + offset;
+			  }
+		  }
 	  }
 	  else {
 		  ID = (header[3] - 48)*1000 + (header[4] - 48)*100 + (header[5] - 48)*10 + (header[6] - 48);
