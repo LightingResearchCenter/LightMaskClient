@@ -40,10 +40,9 @@ public class DaysimDownloadThread extends Thread {
 			// Check if previous byte array is equal to the current one
 			while (!Arrays.equals(b, prev_b)) {
 				// Remount the daysimeter and wait 5 seconds
-				//LightMaskClient.remount(parentPath);
-				System.out.println("Sleeping");
+				LightMaskClient.remount(parentPath);
 				try {
-				    Thread.sleep(5000);
+				    Thread.sleep(1000);
 				} catch(InterruptedException ex) {
 				    Thread.currentThread().interrupt();
 				}

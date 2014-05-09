@@ -1,0 +1,5 @@
+select volume=D
+remove
+assign
+
+exit

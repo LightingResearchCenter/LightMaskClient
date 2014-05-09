@@ -90,6 +90,7 @@ public class LightMaskClient extends PApplet {
 		maskManager = new LightMaskManager();							//Creates a LightMask Manager
 		odesolver = new MatlabODESolver(this);								//Initializes the MatlabODE solver
 		ddm = new DropdownMenu(this);									//Creates the dropdown menu
+		System.out.println(new File("").getAbsolutePath());
 		
 		initTextArea();		//Creates the text area
 		initButtons();		//Creates the buttons
@@ -416,7 +417,8 @@ public class LightMaskClient extends PApplet {
 	public static void remount(String path) {
 		//String cmd = System.getProperty("user.dir") + "\\remount.bat " + path;
 		replaceSelected(path.substring(0, 1));
-		String cmd = "diskpart /s C:\\Users\\pentla\\Desktop\\diskpartScript.txt";
+		String scriptPath = new File("").getAbsolutePath() + "/diskpartScript.txt";
+		String cmd = "diskpart /s " + scriptPath;
 		System.out.println(cmd);
 	    runCommand(cmd);
 	}
@@ -440,7 +442,8 @@ public class LightMaskClient extends PApplet {
 	public static void replaceSelected(String driveLetter) {
 	    try {
 	        // input the file content to the String "input"
-	        BufferedReader in_file = new BufferedReader(new FileReader("C:\\Users\\pentla\\Desktop\\diskpartScript.txt"));
+            String scriptPath = new File("").getAbsolutePath() + "/diskpartScript.txt";
+	        BufferedReader in_file = new BufferedReader(new FileReader(scriptPath));
 	        String line;
 	        String input = "";
 
@@ -455,7 +458,7 @@ public class LightMaskClient extends PApplet {
 	        System.out.println("----------------------------------"  + '\n' + input);
 
 	        // write the new String with the replaced line OVER the same file
-	        FileOutputStream out_file = new FileOutputStream("C:\\Users\\pentla\\Desktop\\diskpartScript.txt");
+	        FileOutputStream out_file = new FileOutputStream(scriptPath);
 	        out_file.write(input.getBytes());
 	        out_file.close();
 
