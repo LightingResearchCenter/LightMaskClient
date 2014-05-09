@@ -10,17 +10,20 @@ import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Date;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import controlP5.ControlEvent;
-
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -384,6 +387,40 @@ public class LightMaskClient extends PApplet {
 	    return "nothing";
 	}
 	
+	public static String runCommand(String cmd) {
+		 try {
+			 String command = "cmd /c " + cmd;
+
+             Process p = Runtime.getRuntime().exec(command);
+             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+             String Error;
+             while ((Error = stdError.readLine()) != null) {
+                 System.err.println(Error);
+             }
+             
+             String result = stdInput.readLine();
+             if (result != null) {
+            	 result = result.trim();
+            	 System.out.println(result);
+             }
+             
+             p.waitFor();
+             return result;
+		} 
+	    catch (Exception e) {
+	             e.printStackTrace();
+	             return null;
+	    }  
+	}
+	public static void remount(String path) {
+		//String cmd = System.getProperty("user.dir") + "\\remount.bat " + path;
+		replaceSelected(path.substring(0, 1));
+		String cmd = "diskpart /s C:\\Users\\pentla\\Desktop\\diskpartScript.txt";
+		System.out.println(cmd);
+	    runCommand(cmd);
+	}
+	
 	//Loads a processed file into the program
 	public void loadFile () {
 		FileDialog fileSelector = new FileDialog();
@@ -398,6 +435,33 @@ public class LightMaskClient extends PApplet {
 			taMain.append("\nFile  at location:\n" + loadPath[0] + "\nhas been loaded");
 			daysPathSet = true;
 		}
+	}
+	
+	public static void replaceSelected(String driveLetter) {
+	    try {
+	        // input the file content to the String "input"
+	        BufferedReader in_file = new BufferedReader(new FileReader("C:\\Users\\pentla\\Desktop\\diskpartScript.txt"));
+	        String line;
+	        String input = "";
+
+	        line = in_file.readLine();
+	        line = line.substring(0, line.length() - 1) + driveLetter;
+	        input += line + '\n';
+	        while ((line = in_file.readLine()) != null)
+	        	input += line + '\n';
+	        in_file.close();
+
+	        // check if the new input is right
+	        System.out.println("----------------------------------"  + '\n' + input);
+
+	        // write the new String with the replaced line OVER the same file
+	        FileOutputStream out_file = new FileOutputStream("C:\\Users\\pentla\\Desktop\\diskpartScript.txt");
+	        out_file.write(input.getBytes());
+	        out_file.close();
+
+	    } catch (Exception e) {
+	        System.out.println("Problem reading file.");
+	    }
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
