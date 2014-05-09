@@ -248,3 +248,4 @@ pip-log.txt
 
 # Simulink Code Generation	
 slprj/
+*.png
