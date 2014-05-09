@@ -388,6 +388,7 @@ public class LightMaskClient extends PApplet {
 	    return "nothing";
 	}
 	
+	// Run a shell command and return the output
 	public static String runCommand(String cmd) {
 		 try {
 			 String command = "cmd /c " + cmd;
@@ -414,8 +415,9 @@ public class LightMaskClient extends PApplet {
 	             return null;
 	    }  
 	}
+	
+	// Remount the drive in the given path
 	public static void remount(String path) {
-		//String cmd = System.getProperty("user.dir") + "\\remount.bat " + path;
 		replaceSelected(path.substring(0, 1));
 		String scriptPath = new File("").getAbsolutePath() + "/diskpartScript.txt";
 		String cmd = "diskpart /s " + scriptPath;
@@ -439,6 +441,7 @@ public class LightMaskClient extends PApplet {
 		}
 	}
 	
+	// Replaces the drive letter in the diskpart script with the given letter
 	public static void replaceSelected(String driveLetter) {
 	    try {
 	        // input the file content to the String "input"
@@ -447,6 +450,7 @@ public class LightMaskClient extends PApplet {
 	        String line;
 	        String input = "";
 
+	        // Replace the first line with the line ending with the new drive letter
 	        line = in_file.readLine();
 	        line = line.substring(0, line.length() - 1) + driveLetter;
 	        input += line + '\n';
@@ -463,7 +467,7 @@ public class LightMaskClient extends PApplet {
 	        out_file.close();
 
 	    } catch (Exception e) {
-	        System.out.println("Problem reading file.");
+	        System.out.println("Problem reading diskpart script.");
 	    }
 	}
 	
